@@ -8,9 +8,9 @@ public record UsuarioResponseDTO(
         String nome,
         Cargo cargo,
         String cpf,
-
         String email,
-        Boolean ativo
+        Boolean ativo,
+        Boolean ferias
 ) {
     public static UsuarioResponseDTO fromEntity(Usuario usuario){
         return new UsuarioResponseDTO(
@@ -19,7 +19,8 @@ public record UsuarioResponseDTO(
                 usuario.getCargo(),
                 usuario.getCpf(),
                 usuario.getEmail(),
-                usuario.getAtivo()
+                usuario.getAtivo(),
+                usuario.getFerias()
                 );
     }
 }
