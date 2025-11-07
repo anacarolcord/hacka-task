@@ -4,11 +4,13 @@ import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
+import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +66,15 @@ public class UsuarioService {
                 .map(UsuarioResponseDTO::fromEntity)
                 .toList();
         
+    }
+
+
+    public UsuarioResponseDTO deletarUsuario(String id){
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if(usuario.isPresent()){
+            usuario.get().setAtivo(false);
+            return UsuarioResponseDTO.fromEntity(usuario.get());
+        }
+        throw new UserNotFoundException(id);
     }
 }
