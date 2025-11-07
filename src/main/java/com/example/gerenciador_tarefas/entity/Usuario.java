@@ -21,6 +21,5 @@ public class Usuario {
     private String email;
     private String cpf;
     private String senha;
-    private Boolean ativo;
-
+    private Boolean ativo = Boolean.TRUE;
 }
