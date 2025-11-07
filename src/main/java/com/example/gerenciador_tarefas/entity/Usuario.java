@@ -28,6 +28,7 @@ public class Usuario implements UserDetails {
     private String cpf;
     private String senha;
     private Boolean ativo = Boolean.TRUE;
+    private Boolean ferias = Boolean.FALSE;
     private List<Tarefa> tarefas = new ArrayList<>();
 
     @Override
