@@ -1,6 +1,6 @@
 package com.example.gerenciador_tarefas.config;
 
-import com.example.gerenciador_tarefas.repository.UserRepository;
+import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UsuarioRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
