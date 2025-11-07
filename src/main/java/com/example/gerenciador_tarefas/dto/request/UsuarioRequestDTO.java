@@ -1,6 +1,6 @@
 package com.example.gerenciador_tarefas.dto.request;
 
-import com.example.gerenciador_tarefas.entity.User;
+import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -22,17 +22,17 @@ public record UsuarioRequestDTO(
         String senha
 ) {
 
-    public User toEntity(){
+    public Usuario toEntity(){
 
-        User user = new User();
+        Usuario usuario = new Usuario();
 
-        user.setNome(this.nome);
-        user.setCargo(this.cargo);
-        user.setCpf(this.cpf);
-        user.setEmail(this.email);
-        user.setSenha(this.senha);
+        usuario.setNome(this.nome);
+        usuario.setCargo(this.cargo);
+        usuario.setCpf(this.cpf);
+        usuario.setEmail(this.email);
+        usuario.setSenha(this.senha);
 
-        return user;
+        return usuario;
 
     }
 
