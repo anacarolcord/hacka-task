@@ -9,7 +9,8 @@ public record UserResponseDTO(
         Cargo cargo,
         String cpf,
 
-        String email
+        String email,
+        Boolean ativo
 ) {
     public static UserResponseDTO fromEntity(User user){
         return new UserResponseDTO(
@@ -17,7 +18,8 @@ public record UserResponseDTO(
                 user.getNome(),
                 user.getCargo(),
                 user.getCpf(),
-                user.getEmail()
+                user.getEmail(),
+                user.getAtivo()
                 );
     }
 }
