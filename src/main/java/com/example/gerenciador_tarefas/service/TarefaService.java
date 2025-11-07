@@ -1,0 +1,16 @@
+package com.example.gerenciador_tarefas.service;
+
+import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
+import com.example.gerenciador_tarefas.entity.Tarefa;
+import com.example.gerenciador_tarefas.repository.TarefaRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class TarefaService {
+
+
+
+}

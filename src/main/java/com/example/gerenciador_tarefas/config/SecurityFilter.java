@@ -1,6 +1,6 @@
 package com.example.gerenciador_tarefas.config;
 
-import com.example.gerenciador_tarefas.repository.UserRepository;
+import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Component
 public class SecurityFilter  extends OncePerRequestFilter {
     private final TokenService tokenService;
-    private final UserRepository userRepository;
+    private final UsuarioRepository usuarioRepository;
 
 
     @Override
@@ -26,7 +26,7 @@ public class SecurityFilter  extends OncePerRequestFilter {
         var token=recuperarToken(request);
         if (token!=null){
             var login=tokenService.validarToken(token);
-            UserDetails user= userRepository.findByCpf(login);
+            UserDetails user= usuarioRepository.findByCpf(login);
             var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
