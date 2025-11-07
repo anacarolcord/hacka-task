@@ -1,11 +1,8 @@
 package com.example.gerenciador_tarefas.entity;
 
-import com.example.gerenciador_tarefas.enums.StatusTarefa;
+import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,10 +10,8 @@ import java.time.LocalDate;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@EqualsAndHashCode(of = "id")
-
-
+@Getter
+@Setter
 public class Tarefa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +30,9 @@ public class Tarefa {
 
     private Duration tempoEstimado;
     private Duration tempoUtilizado;
-    private String idUser;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
 }
