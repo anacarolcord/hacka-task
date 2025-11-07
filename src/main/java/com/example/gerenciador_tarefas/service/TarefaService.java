@@ -11,13 +11,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TarefaService {
 
-    private final TarefaRepository repository;
 
-public TarefaResponseDto salvar(TarefaRequestDto dados){
-    Tarefa tarefa = new Tarefa();
-
-    tarefa.setNome(dados.getNome());
-    tarefa.setDescricao
-}
 
 }

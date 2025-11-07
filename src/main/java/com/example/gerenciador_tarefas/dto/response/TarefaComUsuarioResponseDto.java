@@ -1,6 +1,7 @@
 package com.example.gerenciador_tarefas.dto.response;
 
 import com.example.gerenciador_tarefas.entity.Tarefa;
+import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
 
 import java.time.Duration;

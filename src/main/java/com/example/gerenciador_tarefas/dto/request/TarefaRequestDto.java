@@ -15,6 +15,7 @@ public record TarefaRequestDto (
         Duration tempoUtilizado
 ){
     TarefaRequestDto toEntity(Tarefa tarefa){
+
         TarefaRequestDto dto = new TarefaRequestDto(
                 tarefa.getNome(),
                 tarefa.getDescricao(),

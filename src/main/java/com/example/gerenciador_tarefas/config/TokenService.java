@@ -2,7 +2,7 @@ package com.example.gerenciador_tarefas.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.gerenciador_tarefas.entity.User;
+import com.example.gerenciador_tarefas.entity.Usuario;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -16,7 +16,7 @@ import java.util.Date;
 public class TokenService {
     private String secret= "segredo";
 
-    public String gerarToken(User user){
+    public String gerarToken(Usuario user){
         try {
             Algorithm algorithm=Algorithm.HMAC256(secret);
             return JWT.create()
