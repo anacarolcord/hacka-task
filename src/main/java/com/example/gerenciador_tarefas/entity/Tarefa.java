@@ -1,8 +1,8 @@
 package com.example.gerenciador_tarefas.entity;
 
 import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Duration;

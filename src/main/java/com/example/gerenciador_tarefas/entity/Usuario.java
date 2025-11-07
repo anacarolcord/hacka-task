@@ -1,10 +1,10 @@
 package com.example.gerenciador_tarefas.entity;
 
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,6 +28,7 @@ public class Usuario implements UserDetails {
     private String cpf;
     private String senha;
     private Boolean ativo = Boolean.TRUE;
+    private Boolean ferias = Boolean.FALSE;
     private List<Tarefa> tarefas = new ArrayList<>();
 
     @Override
