@@ -22,7 +22,7 @@ public record TarefaRequestDto (
         tarefa.setNome(this.nome);
         tarefa.setDescricao(this.descricao);
         tarefa.setDataDeAtualizacao(this.dataDeAtualizacao);
-        tarefa.setStatus(this.status);
+        tarefa.setStatus(StatusTarefa.PENDENTE);
         tarefa.setTempoEstimado(this.tempoEstimado);
         tarefa.setTempoUtilizado(this.tempoUtilizado);
         tarefa.setUsuario(usuario);
