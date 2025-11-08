@@ -1,9 +1,7 @@
 package com.example.gerenciador_tarefas.service;
 
-import com.example.gerenciador_tarefas.dto.request.UsarioGestorRequestDTO;
-import com.example.gerenciador_tarefas.dto.request.UsarioGestorRequestDTO;
+import com.example.gerenciador_tarefas.dto.request.UsuarioGestorRequestDTO;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
-import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
@@ -33,7 +31,7 @@ public class UsuarioService {
                 .toList();
     }
 
-    public UsuarioGestorResponseDTO criarAdm(UsarioGestorRequestDTO request){
+    public UsuarioGestorResponseDTO criarAdm(UsuarioGestorRequestDTO request){
         String senha= new BCryptPasswordEncoder().encode(request.senha());
         Usuario usuarioadm = request.toEntity(senha);
         usuarioRepository.save((usuarioadm));
