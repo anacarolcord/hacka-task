@@ -41,34 +41,57 @@ public class UsuarioService {
                 .toList();
     }
 
-    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo) {
+    public Object pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo) {
 
-        int contador = 0;
-        if (idUsuario != null) contador++;
-        if (nome != null) contador++;
-        if (cargo != null) contador++;
-        if (email != null) contador++;
-        if (ativo != null) contador++;
-
-        if (contador == 0) {
-            // Nenhum filtro -> traz tudo
-            return usuarioRepository.findAll()
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-        }
-
-        if (contador > 1) {
-            throw new IllegalArgumentException("Apenas um parâmetro de pesquisa pode ser usado por vez.");
-        }
-
-        // Aqui sabemos que só há um parâmetro preenchido
         if (idUsuario != null) {
-            return usuarioRepository.findById(idUsuario)
+            Usuario usuario = usuarioRepository.findById(idUsuario)
+                    .orElseThrow(() -> new UserNotFoundException(idUsuario));
+
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+
+        if (email != null) {
+            Usuario usuario = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() -> new UserNotFoundException(email));
+
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+
+        if (nome != null && cargo != null && ativo != null){
+
+            return usuarioRepository.findByNomeAndCargoAndAtivo(nome, cargo, ativo)
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+
+        }
+
+        if (nome != null && cargo != null){
+
+            return usuarioRepository.findByNomeAndCargo(nome, cargo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
+
+        if (nome != null && ativo != null){
+
+            return usuarioRepository.findByNomeAndAtivo(nome, ativo)
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
+
+        if (cargo != null && ativo != null){
+
+            return usuarioRepository.findByCargoAndAtivo(cargo, ativo)
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+
+        }
+
+
 
         if (nome != null) {
             return usuarioRepository.findByNome(nome)
@@ -84,12 +107,7 @@ public class UsuarioService {
                     .toList();
         }
 
-        if (email != null) {
-            return usuarioRepository.findByEmail(email)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-        }
+
 
         if (ativo != null) {
             return usuarioRepository.findByAtivo(ativo)

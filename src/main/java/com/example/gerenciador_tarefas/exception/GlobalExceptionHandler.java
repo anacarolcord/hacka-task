@@ -30,5 +30,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUsuarioInativo(UsuarioInativoException ex){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
+
+    @ExceptionHandler(CpfDuplicadoException.class)
+    public ResponseEntity<String> handleCpfDuplicado(CpfDuplicadoException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(HistoricoNaoEncontradoException.class)
+    public ResponseEntity<String> handleHistoricoNaoEncontrado(HistoricoNaoEncontradoException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
 }
 
