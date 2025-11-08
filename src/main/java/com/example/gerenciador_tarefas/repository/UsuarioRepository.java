@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 
-public interface UsuarioRepository extends MongoRepository<Usuario, Long > {
+public interface UsuarioRepository extends MongoRepository<Usuario, String > {
     UserDetails findByCpf(String cpf);
 
     List<Usuario> findByNome(String nome);

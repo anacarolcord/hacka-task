@@ -34,7 +34,14 @@ public class UsuarioService {
                 .toList();
     }
 
-    public List<UsuarioResponseDTO> pesquisaUsuarios(String nome, Cargo cargo, String email, Boolean ativo){
+    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo){
+
+        if (idUsuario != null){
+            return usuarioRepository.findById(idUsuario)
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
 
         if (nome != null){
             return usuarioRepository.findByNome(nome)
@@ -72,8 +79,8 @@ public class UsuarioService {
     }
 
 
-    public UsuarioResponseDTO deletarUsuario(Long idUsuario){
-        Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
+    public UsuarioResponseDTO deletarUsuario(String idUsuario){
+        Optional<Usuario> usuario = usuarioRepository.findById(String.valueOf(Long.valueOf(idUsuario)));
         if(usuario.isPresent()){
             usuario.get().setAtivo(false);
             return UsuarioResponseDTO.fromEntity(usuario.get());

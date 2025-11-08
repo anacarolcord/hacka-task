@@ -21,7 +21,7 @@ import java.util.List;
 public class Usuario implements UserDetails {
 
     @Id
-    private Long idUsuario;
+    private String idUsuario;
     private String nome;
     private Cargo cargo;
     private String email;

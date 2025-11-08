@@ -36,20 +36,21 @@ public class UsuarioController {
     }
 
     @GetMapping("/pesquisa")
-    public ResponseEntity<List<UsuarioResponseDTO>> pesquisaUsuarios(@RequestParam(required = false)String nome,
+    public ResponseEntity<List<UsuarioResponseDTO>> pesquisaUsuarios(@RequestParam(required = false)String idUsuario,
+                                                                     @RequestParam(required = false)String nome,
                                                                      @RequestParam(required = false)Cargo cargo,
                                                                      @RequestParam(required = false)String email,
                                                                      @RequestParam(required = false)Boolean ativo){
 
-        List<UsuarioResponseDTO> responseDTO = usuarioService.pesquisaUsuarios(nome, cargo, email, ativo);
+        List<UsuarioResponseDTO> responseDTO = usuarioService.pesquisaUsuarios(idUsuario, nome, cargo, email, ativo);
         return ResponseEntity.ok(responseDTO);
 
     }
 
     @PutMapping("/{idUsuario}")
-    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") Long idUsuario){
+    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") String idUsuario){
 
-        UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(idUsuario);
+        UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(String.valueOf(Long.valueOf(idUsuario)));
         return ResponseEntity.ok(responseDTO);
 
     }

@@ -4,7 +4,7 @@ import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 
 public record UsuarioResponseDTO(
-        Long idUser,
+        String idUsuario,
         String nome,
         Cargo cargo,
         String cpf,
