@@ -51,7 +51,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/delete/{idUsuario}")
-    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") String idUsuario){
+    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable String idUsuario){
 
         UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(idUsuario);
         return ResponseEntity.ok(responseDTO);
