@@ -1,7 +1,9 @@
 package com.example.gerenciador_tarefas.controller;
 
 import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
+import com.example.gerenciador_tarefas.dto.request.UsuarioGestorRequestDTO;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
+import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
@@ -55,6 +57,13 @@ public class UsuarioController {
         return ResponseEntity.ok(responseDTO);
 
     }
+
+    @PostMapping("/admin")
+    public ResponseEntity <UsuarioGestorResponseDTO> criarGestor(@RequestBody UsuarioGestorRequestDTO dto){
+        UsuarioGestorResponseDTO usuariogestor=usuarioService.criarGestor(dto);
+        return ResponseEntity.status(201).body(usuariogestor);
+    }
+
 
 
     @PatchMapping("/atualizar/senha/{idUsuario}")
