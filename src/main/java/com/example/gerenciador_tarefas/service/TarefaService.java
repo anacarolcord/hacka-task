@@ -227,7 +227,7 @@ public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuar
 }
 
 //método de transferir tarefas para usuario
-    public TarefaResponseDto transferirTarefa(String idUsuariorecebe, String idUsuarioenvia){
+    public void transferirTarefa(String idUsuariorecebe, String idUsuarioenvia){
 
         Usuario usuarioEnvia = usuarioRepository.findById(idUsuarioenvia)
                 .orElseThrow(()-> new UserNotFoundException(idUsuarioenvia));
@@ -258,10 +258,11 @@ public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuar
         usuarioRepository.save(usuarioRecebe);
         usuarioRepository.save(usuarioEnvia);
 
+        //registrar no historico
 
+    }
 
-
-
+    public TarefaResponseDto deletarTarefa(String idTarefa){
 
     }
 
