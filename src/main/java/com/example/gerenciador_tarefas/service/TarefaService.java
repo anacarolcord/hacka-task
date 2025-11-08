@@ -31,7 +31,7 @@ public class TarefaService {
         return TarefaResponseDto.fromEntity(tarefa);
     }
 
-    public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, Usuario usuario) {
+    public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, String idTarefa, Usuario usuario) {
         Tarefa tarefa = repository.findById(idTarefa)
                 .orElseThrow(TarefaNaoEncontradaException::new);
 

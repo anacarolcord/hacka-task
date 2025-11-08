@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.controller;
 
+import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
@@ -21,7 +22,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDTO> cadastrarColaborador(@RequestBody @Valid UsuarioRequestDTO request){
+    public ResponseEntity<UsuarioResponseDTO> cadastrarColaborador(@RequestBody @Valid CriarColaboradorRequest request){
         UsuarioResponseDTO response = usuarioService.criarColaborador(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -47,7 +48,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{idUsuario}")
-    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") Long idUsuario){
+    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") String idUsuario){
 
         UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(idUsuario);
         return ResponseEntity.ok(responseDTO);

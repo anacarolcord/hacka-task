@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.service;
 
+import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioResponseDTO criarColaborador(UsuarioRequestDTO request){
+    public UsuarioResponseDTO criarColaborador(CriarColaboradorRequest request){
         String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
 
         Usuario usuario = request.toEntity(senhaCriptografada);
@@ -72,7 +73,7 @@ public class UsuarioService {
     }
 
 
-    public UsuarioResponseDTO deletarUsuario(Long idUsuario){
+    public UsuarioResponseDTO deletarUsuario(String idUsuario){
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         if(usuario.isPresent()){
             usuario.get().setAtivo(false);
