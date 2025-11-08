@@ -7,6 +7,7 @@ import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import com.example.gerenciador_tarefas.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,13 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponseDTO> cadastrarColaborador(@RequestBody @Valid UsuarioRequestDTO request){
+        UsuarioResponseDTO response = usuarioService.criarColaborador(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios(){

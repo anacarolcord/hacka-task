@@ -15,7 +15,7 @@ public record UsuarioRequestDTO(
 
         @NotBlank(message = "O cpf não pode ser nulo!")
         String cpf,
-        @Email
+
         @NotBlank(message = "O email não pode ser nulo!")
         String email,
         @NotBlank(message = "A senha não pode ser nulo!")
