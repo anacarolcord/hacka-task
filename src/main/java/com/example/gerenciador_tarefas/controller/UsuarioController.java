@@ -39,13 +39,13 @@ public class UsuarioController {
     }
 
     @GetMapping("/pesquisa")
-    public ResponseEntity<List<UsuarioResponseDTO>> pesquisaUsuarios(@RequestParam(required = false)String idUsuario,
+    public ResponseEntity<Object> pesquisaUsuarios(@RequestParam(required = false)String idUsuario,
                                                                      @RequestParam(required = false)String nome,
                                                                      @RequestParam(required = false)Cargo cargo,
                                                                      @RequestParam(required = false)String email,
                                                                      @RequestParam(required = false)Boolean ativo){
 
-        List<UsuarioResponseDTO> responseDTO = usuarioService.pesquisaUsuarios(idUsuario, nome, cargo, email, ativo);
+        Object responseDTO = usuarioService.pesquisaUsuarios(idUsuario, nome, cargo, email, ativo);
         return ResponseEntity.ok(responseDTO);
 
     }
