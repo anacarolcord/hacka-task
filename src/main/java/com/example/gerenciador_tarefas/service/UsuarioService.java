@@ -7,6 +7,7 @@ import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +18,10 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioResponseDTO criarUsuario(UsuarioRequestDTO request){
-        Usuario usuario = request.toEntity();
+    public UsuarioResponseDTO criarColaborador(UsuarioRequestDTO request){
+        String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
+
+        Usuario usuario = request.toEntity(senhaCriptografada);
         usuarioRepository.save(usuario);
 
         return UsuarioResponseDTO.fromEntity(usuario);
