@@ -28,6 +28,8 @@ public class Tarefa {
     private Duration tempoEstimado;
     private Duration tempoUtilizado;
 
+    private Historico historico;
+
     private Usuario usuario;
 
 }
