@@ -182,7 +182,10 @@ public class TarefaService {
     }
 
     //Método gestor atribui tarefa para um usuario específico
-    public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario) {
+    public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
         Tarefa atualizada = null;
         if (usuario.getAtivo() && usuario.getFerias()==null) {
