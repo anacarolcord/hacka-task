@@ -263,6 +263,9 @@ public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuar
     }
 
     public TarefaResponseDto deletarTarefa(String idTarefa){
+           Tarefa t =  repository.findById(idTarefa)
+                    .orElseThrow(()->new TarefaNaoEncontradaException());
+
 
     }
 
