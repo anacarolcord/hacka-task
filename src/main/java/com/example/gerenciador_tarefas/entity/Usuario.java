@@ -1,10 +1,10 @@
 package com.example.gerenciador_tarefas.entity;
 
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
