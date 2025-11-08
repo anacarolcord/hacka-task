@@ -21,16 +21,40 @@ public class TarefaController {
     private final TarefaService service;
 
 
-    @PostMapping("/criar-tarefa")
+    @PostMapping
     public ResponseEntity <TarefaResponseDto> criarTarefa(@RequestBody TarefaRequestDto dto) {
         TarefaResponseDto tarefa= service.salvarTarefa(dto);
         return ResponseEntity.status(201).body(tarefa);
     }
 
-    @GetMapping("/listar-tarefas")
-    public ResponseEntity listartarefas(Usuario usuario){
+    @GetMapping("/gestores")
+    public ResponseEntity listarTarefasGestor(Usuario usuario){
         List<TarefaResponseDto>  tarefas =service.listarTodasGestor(usuario);
         return ResponseEntity.status(200).body(tarefas);
     }
+    @GetMapping("/usuarios")
+    public ResponseEntity listarTarefasUsuarios(Usuario usuario){
+        List<TarefaResponseDto>  tarefas =service.listarTodasUsuario(usuario);
+        return ResponseEntity.status(200).body(tarefas);
+    }
+
+    @PatchMapping("/atulizar/gestor/{id}")
+    public ResponseEntity atualizarTarefa(@RequestBody TarefaRequestDto dto, @PathVariable("id") String id, Usuario usuario){
+        TarefaResponseDto tarefaAtualizada = service.atualizarTarefaGestor(dto, id,  usuario);
+        return ResponseEntity.status(200).body(tarefaAtualizada);
+    }
+
+    @PatchMapping("/atulizar/colaborador/{id}")
+    public ResponseEntity atualizarTarefaColaborador(@RequestBody TarefaRequestDto dto, @PathVariable("id") String id, Usuario usuario){
+        TarefaResponseDto tarefaAtualizada = service.atualizarTarefaColaborador(dto, id,  usuario);
+        return ResponseEntity.status(200).body(tarefaAtualizada);
+    }
+
+    @GetMapping("/listar/usuario/{id}")
+    public ResponseEntity listarTarefasPorUsuario(Usuario usuario, @PathVariable("id") String id){
+        List<TarefaResponseDto>  tarefas =service.listarTodasPeloIdUsuario(usuario, id);
+        return ResponseEntity.status(200).body(tarefas);
+    }
+
 }
 

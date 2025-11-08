@@ -19,6 +19,5 @@ public class Historico {
 
     private Transferencia transferencia;
 
-    private Tarefa tarefa;
 
 }

@@ -66,29 +66,6 @@ public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String id
     return TarefaResponseDto.fromEntity(tarefa);
 }
 
-public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, String idTarefa, Usuario usuario){
-
-    Tarefa tarefa = repository.findById(idTarefa)
-            .orElseThrow(()-> new TarefaNaoEncontradaException());
-
-
-
-    if(usuario.getAtivo()
-            && usuario.getFerias()==null) {
-
-        tarefa.setNome(dados.nome());
-        tarefa.setDescricao(dados.descricao());
-        tarefa.setStatus(dados.status());
-        tarefa.setTempoEstimado(dados.tempoEstimado());
-        tarefa.setUsuario(dados.usuario());
-        tarefa.setTempoUtilizado(dados.tempoUtilizado());
-
-    }
-
-    //mandar pro historico
-
-    return TarefaResponseDto.fromEntity(tarefa);
-}
 
 //método que pesquisa todas as tarefas que existem
 //método só pode ser feito por gestor e o gestor só pode pesquisar se estiver ativo e não estiver de férias
