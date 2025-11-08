@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Duration;
 import java.time.LocalDate;
 
-@Document(collation = "tarefa")
+@Document(collection = "tarefa")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
