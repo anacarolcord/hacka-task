@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -395,7 +396,28 @@ public class TarefaService {
         );
     }
 
+    public List<Tarefa> ordenarTarefasPorPrioridade(List<Tarefa> tarefas) {
+        return tarefas.stream()
+                .filter(t -> t.getStatus() != StatusTarefa.CONCLUIDA && t.getStatus() != StatusTarefa.CANCELADA)
+                .sorted(Comparator
+                        .comparing(Tarefa::getStatus) // PENDENTE antes de EM_ANDAMENTO
+                        .thenComparing(Tarefa::getDataDeAtualizacao)) // datas próximas primeiro
+                .collect(Collectors.toList());
+    }
+
+
+
+
+    public List<Tarefa> listarTodasUsuarioSimples(Usuario usuario) {
+        if (usuario.getAtivo() && usuario.getFerias() == null) {
+            return repository.findAllByUsuarioCpf(usuario.getCpf());
+        } else {
+            throw new AcessoNaoAutorizadoException();
+        }
+    }
 }
+
+
 
 
 
