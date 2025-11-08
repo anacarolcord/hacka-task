@@ -1,7 +1,8 @@
 package com.example.gerenciador_tarefas.controller;
 
-import com.example.gerenciador_tarefas.dto.request.AtribuirTarefaRequest;
+import com.example.gerenciador_tarefas.dto.request.CriarTarefaRequest;
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.CriarTarefaResponse;
 import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.entity.Usuario;
@@ -25,8 +26,8 @@ public class TarefaController {
 
 
     @PostMapping
-    public ResponseEntity<TarefaResponseDto> criarTarefa(@RequestBody TarefaRequestDto dto) {
-        TarefaResponseDto tarefa= service.salvarTarefa(dto);
+    public ResponseEntity<CriarTarefaResponse> criarTarefa(@RequestBody CriarTarefaRequest dto) {
+        CriarTarefaResponse tarefa= service.salvarTarefa(dto);
         return ResponseEntity.status(201).body(tarefa);
     }
 
@@ -74,14 +75,6 @@ public class TarefaController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @PatchMapping("/atribuir")
-    public  ResponseEntity<TarefaResponseDto> atribuirTarefa(@RequestBody AtribuirTarefaRequest request){
-        TarefaResponseDto tarefaAtualizada = service.atribuirTarefa(request.idTarefa(), request.idUsuario());
-        return ResponseEntity.status(200).body(tarefaAtualizada);
-    }
-
-
 }
 
 
