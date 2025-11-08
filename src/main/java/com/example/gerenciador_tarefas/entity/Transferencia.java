@@ -17,6 +17,4 @@ public class Transferencia {
 
     private String motivo;
 
-    private Tarefa tarefa;
-
 }
