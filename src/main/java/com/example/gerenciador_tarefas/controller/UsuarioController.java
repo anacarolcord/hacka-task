@@ -50,12 +50,19 @@ public class UsuarioController {
     @PutMapping("/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") String idUsuario){
 
-        UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(String.valueOf(Long.valueOf(idUsuario)));
+        UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(idUsuario);
         return ResponseEntity.ok(responseDTO);
 
     }
 
 
+    @PutMapping("/{idUsuario}")
+    public ResponseEntity<UsuarioResponseDTO> atualizarSenha(@PathVariable("idUsuario") String idUsuario, UsuarioRequestDTO request){
+
+        UsuarioResponseDTO responseDTO = usuarioService.atualizarSenha(idUsuario, request);
+        return ResponseEntity.ok(responseDTO);
+
+    }
 
 
 }
