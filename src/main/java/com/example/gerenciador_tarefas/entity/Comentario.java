@@ -14,12 +14,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Ferias {
+public class Comentario {
     @Id
-    private String idFerias;
-    private LocalDateTime dataInicio;
-    private LocalDateTime dataFim;
-    private String idUsuarioReceptor;
-
+    private String id;
+    private String mensagem;
+    private LocalDateTime dataComentario;
+    private String usuario;
 }
-

@@ -9,6 +9,7 @@ import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import com.example.gerenciador_tarefas.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -13,11 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "historico")
 public class Historico {
 
-    private Tarefa tarefa;
-
     private AtualizarCard statusHistorico;
 
     private Transferencia transferencia;
-
 
 }
