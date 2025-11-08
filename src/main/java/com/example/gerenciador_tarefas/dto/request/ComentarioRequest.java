@@ -11,10 +11,11 @@ public record ComentarioRequest(
 
 
 ) {
-    public Comentario toEntity(){
+    public Comentario toEntity(String nome){
         Comentario comentario = new Comentario();
 
         comentario.setMensagem(this.mensagem);
+        comentario.setUsuario(nome);
         comentario.setDataComentario(this.dataComentario);
 
 

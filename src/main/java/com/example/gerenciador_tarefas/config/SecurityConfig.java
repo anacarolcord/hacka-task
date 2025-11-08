@@ -27,8 +27,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->authorize
-                        .requestMatchers("/user").hasRole("GESTOR")
-                        .anyRequest().permitAll())
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/tarefas/criar-tarefa").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/tarefas/listar-tarefas").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/usuarios/admin").hasRole("ADMIN")
+                        .requestMatchers("/usuarios").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/usuarios/pesquisa").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/usuarios/delete/**").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/usuarios/gestor").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/atualizar/cargo/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/webjars/**"
+                        ).permitAll()
+                        .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

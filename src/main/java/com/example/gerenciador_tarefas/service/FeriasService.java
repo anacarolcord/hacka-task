@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,13 @@ public class FeriasService {
         return FeriasResponse.fromEntity(ferias, usuario);
     }
 
-
+    public List<FeriasResponse> listarTodasFerias() {
+        return usuarioRepository.findAll()
+                .stream()
+                .filter(usuario -> usuario.getFerias() != null) // pega só quem tem férias cadastradas
+                .map(usuario -> FeriasResponse.fromEntity(usuario.getFerias(), usuario))
+                .collect(Collectors.toList());
+    }
 
     private void agendarTrasferencia(String idUsuariorecebe, String idUsuarioenvia, LocalDateTime dataFerias, String motivo){
 
