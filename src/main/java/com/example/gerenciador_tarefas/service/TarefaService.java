@@ -9,10 +9,12 @@ import com.example.gerenciador_tarefas.exception.AcessoNaoAutorizadoException;
 import com.example.gerenciador_tarefas.exception.TarefaNaoEncontradaException;
 import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.exception.UsuarioInativoException;
-import com.example.gerenciador_tarefas.repository.HistoricoRepository;
 import com.example.gerenciador_tarefas.repository.TarefaRepository;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +29,9 @@ public class TarefaService {
 
     private final TarefaRepository repository;
     private final UsuarioRepository usuarioRepository;
-    private final HistoricoRepository historicoRepository;
 
+    public TarefaResponseDto salvarTarefa(TarefaRequestDto dados) {
 
-    public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario) {
-        if (usuario.getCargo().equals(Cargo.COLABORADOR)) {
-            throw new AcessoNaoAutorizadoException();
-        }
         Tarefa tarefa = dados.toEntity();
 
         repository.save(tarefa);
@@ -42,25 +40,31 @@ public class TarefaService {
     }
 
     @Transactional
-    public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, String idTarefa, Usuario usuario) {
+    //método que o colaborador atualiza a tarefa(diferentes usuarios alteram partes diferentes de uma tarefa
+    public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, String idTarefa) {
+        //pega o usuario que esta logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
+
         Tarefa tarefa = repository.findById(idTarefa)
                 .orElseThrow(TarefaNaoEncontradaException::new);
 
-        if (usuario.getAtivo() && !usuario.getFerias()) {
+        if (usuario.getAtivo() && usuario.getFerias()==null) {
 
             tarefa.setStatus(dados.status());
             tarefa.setTempoUtilizado(dados.tempoUtilizado());
 
             AtualizarCard atualizarCard = new AtualizarCard();
-            atualizarCard.setTarefa(tarefa);
             atualizarCard.setData(LocalDateTime.now());
             atualizarCard.setStatus(tarefa.getStatus());
 
             Historico historico = new Historico();
 
             historico.setStatusHistorico(atualizarCard);
+            tarefa.setHistorico(historico);
 
-            historicoRepository.save(historico);
+            repository.save(tarefa);
+
 
         } else throw new AcessoNaoAutorizadoException();
 
@@ -69,12 +73,15 @@ public class TarefaService {
 
     }
 
-    public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String idTarefa, Usuario usuario) {
+    public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String idTarefa) {
+        //pega o usuario que esta logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
+
         Tarefa tarefa = repository.findById(idTarefa)
                 .orElseThrow(() -> new TarefaNaoEncontradaException());
 
-        if (usuario.getAtivo()
-                && !usuario.getFerias()) {
+        if (usuario.getAtivo() && usuario.getFerias()==null) {
 
             tarefa.setNome(dados.nome());
             tarefa.setDescricao(dados.descricao());
@@ -83,7 +90,6 @@ public class TarefaService {
             tarefa.setUsuario(dados.usuario());
 
             AtualizarCard atualizarCard = new AtualizarCard();
-            atualizarCard.setTarefa(tarefa);
             atualizarCard.setData(LocalDateTime.now());
             atualizarCard.setStatus(tarefa.getStatus());
 
@@ -91,55 +97,24 @@ public class TarefaService {
 
             historico.setStatusHistorico(atualizarCard);
 
-            historicoRepository.save(historico);
+            repository.save(tarefa);
 
         }
-//mandar pro historico
         return TarefaResponseDto.fromEntity(tarefa);
     }
 
-    public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, String idTarefa, Usuario usuario) {
 
-        Tarefa tarefa = repository.findById(idTarefa)
-                .orElseThrow(() -> new TarefaNaoEncontradaException());
-
-
-        if (usuario.getAtivo()
-                && !usuario.getFerias()) {
-
-            tarefa.setNome(dados.nome());
-            tarefa.setDescricao(dados.descricao());
-            tarefa.setStatus(dados.status());
-            tarefa.setTempoEstimado(dados.tempoEstimado());
-            tarefa.setUsuario(dados.usuario());
-            tarefa.setTempoUtilizado(dados.tempoUtilizado());
-
-            AtualizarCard atualizarCard = new AtualizarCard();
-            Historico historico = new Historico();
-
-            historico.setTarefa(tarefa);
-            atualizarCard.setData(LocalDateTime.now());
-            atualizarCard.setStatus(tarefa.getStatus());
-
-            historico.setStatusHistorico(atualizarCard);
-
-            historicoRepository.save(historico);
-
-        }
-
-        //mandar pro historico
-
-        return TarefaResponseDto.fromEntity(tarefa);
-    }
 
     //método que pesquisa todas as tarefas que existem
 //método só pode ser feito por gestor e o gestor só pode pesquisar se estiver ativo e não estiver de férias
-    public List<TarefaResponseDto> listarTodasGestor(Usuario usuario) {
+    public List<TarefaResponseDto> listarTodasGestor() {
+        //pega o usuario que esta logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
         List<TarefaResponseDto> todas = new ArrayList<>();
 
-        if (usuario.getAtivo()
-                && !usuario.getFerias()) {
+        if (usuario.getAtivo() && usuario.getFerias()==null) {
 
             todas = repository.findAll()
                     .stream()
@@ -152,11 +127,15 @@ public class TarefaService {
     }
 
     //método retorna apenas as tarefas do usuario que esta fazendo a requisiçao
-    public List<TarefaResponseDto> listarTodasUsuario(Usuario usuario) {
+    public List<TarefaResponseDto> listarTodasUsuario() {
+
+        //pega o usuario que esta logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
         List<TarefaResponseDto> tarefasPorUsuario = new ArrayList<>();
 
-        if (usuario.getAtivo() && !usuario.getFerias()) {
+        if (usuario.getAtivo() && usuario.getFerias()==null) {
 
             tarefasPorUsuario = repository.findAllByUsuario(usuario)
                     .stream()
@@ -171,11 +150,14 @@ public class TarefaService {
 
     //método retorna lista de tarefas de um usuario especifico
     //método de gestor!!
-    public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String idUsuario) {
+    public List<TarefaResponseDto> listarTodasPeloIdUsuario( String idUsuario) {
+        //pega o usuario que esta logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
         List<TarefaResponseDto> tarefasPeloIdUsuario = new ArrayList<>();
 
-        if (usuario.getAtivo() && !usuario.getFerias()) {
+        if (usuario.getAtivo() && usuario.getFerias()==null) {
 
             Usuario u = usuarioRepository.findById(idUsuario)
                     .orElseThrow(() -> new UserNotFoundException(idUsuario));
@@ -195,7 +177,7 @@ public class TarefaService {
     public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario) {
 
         Tarefa atualizada = null;
-        if (usuario.getAtivo() && !usuario.getFerias()) {
+        if (usuario.getAtivo() && usuario.getFerias()==null) {
 
             Usuario u = usuarioRepository.findById(idUsuario)
                     .orElseThrow(() -> new UserNotFoundException(idUsuario));
@@ -213,8 +195,10 @@ public class TarefaService {
     }
 
     //método usuário atribui uma tarefa a si mesmo
-    public TarefaResponseDto pegarTarefa(Usuario usuario, String idTarefa) {
-
+    public TarefaResponseDto pegarTarefa( String idTarefa) {
+        //pega o usuario que esta logado
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
 
         Tarefa t = repository.findById(idTarefa)
@@ -223,7 +207,8 @@ public class TarefaService {
         return atribuirTarefa(idTarefa, usuario.getIdUsuario(), usuario);
     }
 
-    //método de transferir tarefas para usuario
+    //método de transferir tarefas entre usuario
+    @Transactional
     public void transferirTarefa(String idUsuariorecebe, String idUsuarioenvia) {
 
         Usuario usuarioEnvia = usuarioRepository.findById(idUsuarioenvia)
@@ -241,7 +226,7 @@ public class TarefaService {
 
         List<Tarefa> tarefasPendentesEmAndamento = new ArrayList<>();
 
-        if (usuarioEnvia.getFerias()) {
+        if (usuarioEnvia.getFerias()!=null) {
 
             tarefasPendentesEmAndamento = usuarioEnvia.getTarefas()
                     .stream()
@@ -266,6 +251,7 @@ public class TarefaService {
         for (Tarefa t : tarefasPendentesEmAndamento) {
             t.setHistorico(historico);
             tarefasRecebe.add(t);
+            repository.save(t);
         }
 
         usuarioRecebe.setTarefas(tarefasPendentesEmAndamento);
@@ -274,6 +260,7 @@ public class TarefaService {
 
         usuarioRepository.save(usuarioRecebe);
         usuarioRepository.save(usuarioEnvia);
+
 
 
     }

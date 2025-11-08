@@ -28,8 +28,8 @@ public class TarefaController {
     }
 
     @GetMapping("/listar-tarefas")
-    public ResponseEntity listartarefas(Usuario usuario){
-        List<TarefaResponseDto>  tarefas =service.listarTodasGestor(usuario);
+    public ResponseEntity listartarefas(){
+        List<TarefaResponseDto>  tarefas =service.listarTodasGestor();
         return ResponseEntity.status(200).body(tarefas);
     }
 }
