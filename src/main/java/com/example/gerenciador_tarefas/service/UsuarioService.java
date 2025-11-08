@@ -1,9 +1,6 @@
 package com.example.gerenciador_tarefas.service;
 
-import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
-import com.example.gerenciador_tarefas.dto.request.UsuarioGestorRequestDTO;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
-import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
@@ -21,7 +18,7 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioResponseDTO criarColaborador(CriarColaboradorRequest request){
+    public UsuarioResponseDTO criarColaborador(UsuarioRequestDTO request){
         String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
 
         Usuario usuario = request.toEntity(senhaCriptografada);
@@ -37,58 +34,87 @@ public class UsuarioService {
                 .toList();
     }
 
-    public List<UsuarioResponseDTO> pesquisaUsuarios(String nome, Cargo cargo, String email, Boolean ativo){
+    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo) {
 
-        if (nome != null){
+        int contador = 0;
+        if (idUsuario != null) contador++;
+        if (nome != null) contador++;
+        if (cargo != null) contador++;
+        if (email != null) contador++;
+        if (ativo != null) contador++;
+
+        if (contador == 0) {
+            // Nenhum filtro -> traz tudo
+            return usuarioRepository.findAll()
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
+
+        if (contador > 1) {
+            throw new IllegalArgumentException("Apenas um parâmetro de pesquisa pode ser usado por vez.");
+        }
+
+        // Aqui sabemos que só há um parâmetro preenchido
+        if (idUsuario != null) {
+            return usuarioRepository.findById(idUsuario)
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
+
+        if (nome != null) {
             return usuarioRepository.findByNome(nome)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (cargo != null){
+        if (cargo != null) {
             return usuarioRepository.findByCargo(cargo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (email != null){
+        if (email != null) {
             return usuarioRepository.findByEmail(email)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (ativo != null){
+        if (ativo != null) {
             return usuarioRepository.findByAtivo(ativo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        return usuarioRepository.findAll()
-                .stream()
-                .map(UsuarioResponseDTO::fromEntity)
-                .toList();
-        
+        return List.of(); // fallback de segurança
     }
 
 
+
     public UsuarioResponseDTO deletarUsuario(String idUsuario){
-        Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
+        Optional<Usuario> usuario = usuarioRepository.findById(String.valueOf(Long.valueOf(idUsuario)));
         if(usuario.isPresent()){
             usuario.get().setAtivo(false);
             return UsuarioResponseDTO.fromEntity(usuario.get());
         }
         throw new UserNotFoundException(idUsuario);
-
     }
-    public UsuarioGestorResponseDTO criarGestor(UsuarioGestorRequestDTO request){
-        String senha= new BCryptPasswordEncoder().encode(request.senha());
-        Usuario usuarioadm = request.toEntity(senha);
-        usuarioRepository.save((usuarioadm));
 
-        return UsuarioGestorResponseDTO.fromEntity(usuarioadm);
+
+
+    public UsuarioResponseDTO atualizarSenha(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setSenha(request.senha());
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
     }
 }
