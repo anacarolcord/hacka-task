@@ -24,7 +24,7 @@ public class UsuarioService {
         return UsuarioResponseDTO.fromEntity(usuario);
     }
 
-    public List<UsuarioResponseDTO> listarUsuario(UsuarioRequestDTO request){
+    public List<UsuarioResponseDTO> listarUsuario(){
         return usuarioRepository.findAll()
                 .stream()
                 .map(UsuarioResponseDTO::fromEntity)
@@ -69,12 +69,12 @@ public class UsuarioService {
     }
 
 
-    public UsuarioResponseDTO deletarUsuario(String id){
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
+    public UsuarioResponseDTO deletarUsuario(Long idUsuario){
+        Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         if(usuario.isPresent()){
             usuario.get().setAtivo(false);
             return UsuarioResponseDTO.fromEntity(usuario.get());
         }
-        throw new UserNotFoundException(id);
+        throw new UserNotFoundException(idUsuario);
     }
 }
