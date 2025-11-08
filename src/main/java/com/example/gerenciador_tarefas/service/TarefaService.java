@@ -1,6 +1,8 @@
 package com.example.gerenciador_tarefas.service;
 
+import com.example.gerenciador_tarefas.dto.request.CriarTarefaRequest;
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.CriarTarefaResponse;
 import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.entity.*;
@@ -11,6 +13,7 @@ import com.example.gerenciador_tarefas.repository.TarefaRepository;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,10 @@ public class TarefaService {
     private final TarefaRepository repository;
     private final UsuarioRepository usuarioRepository;
 
-    public TarefaResponseDto salvarTarefa(TarefaRequestDto dados) {
+    public CriarTarefaResponse salvarTarefa(CriarTarefaRequest dados) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
+
         log.info("Iniciando criacao de tarefa, mapeando Tarefa...");
         Tarefa tarefa = dados.toEntity();
 
@@ -39,7 +45,8 @@ public class TarefaService {
         repository.save(tarefa);
 
         log.info("Tarefa persistida, finalizando salvamento");
-        return TarefaResponseDto.fromEntity(tarefa);
+
+        return CriarTarefaResponse.fromEntity(tarefa);
     }
 
     @Transactional

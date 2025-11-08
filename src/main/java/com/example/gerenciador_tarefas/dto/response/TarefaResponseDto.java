@@ -3,6 +3,8 @@ package com.example.gerenciador_tarefas.dto.response;
 import com.example.gerenciador_tarefas.entity.Tarefa;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
+import org.springframework.http.HttpMessage;
+import org.springframework.http.HttpStatus;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -15,6 +17,7 @@ public record TarefaResponseDto(
         StatusTarefa status,
         Duration tempoEstimado,
         Duration tempoUtilizado
+
 ) {
     public static TarefaResponseDto fromEntity(Tarefa tarefa){
         return new TarefaResponseDto(tarefa.getIdTarefa(),

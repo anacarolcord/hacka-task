@@ -25,7 +25,7 @@ public class TokenService {
                     .withExpiresAt(gerarDataExpiracao())
                     .sign(algorithm);
         } catch (UnsupportedEncodingException ex){
-            return "";
+            return "Usuário nao autorizado";
         }
     }
 
@@ -45,7 +45,7 @@ public class TokenService {
 
 
         }catch (UnsupportedEncodingException ex){
-            return "";
+            return "Usuario nao autorizado";
         }
     }
 
