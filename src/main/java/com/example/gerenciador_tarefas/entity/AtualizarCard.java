@@ -1,20 +1,23 @@
 package com.example.gerenciador_tarefas.entity;
 
+import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Transferencia {
+public class AtualizarCard {
 
-    private Usuario emissor;
+    private LocalDateTime data;
 
-    private Usuario receptor;
+    private StatusTarefa status;
 
-    private String motivo;
+    private Tarefa tarefa;
 
 }
