@@ -35,49 +35,66 @@ public class UsuarioService {
                 .toList();
     }
 
-    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo){
+    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo) {
 
-        if (idUsuario != null){
+        int contador = 0;
+        if (idUsuario != null) contador++;
+        if (nome != null) contador++;
+        if (cargo != null) contador++;
+        if (email != null) contador++;
+        if (ativo != null) contador++;
+
+        if (contador == 0) {
+            // Nenhum filtro -> traz tudo
+            return usuarioRepository.findAll()
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
+
+        if (contador > 1) {
+            throw new IllegalArgumentException("Apenas um parâmetro de pesquisa pode ser usado por vez.");
+        }
+
+        // Aqui sabemos que só há um parâmetro preenchido
+        if (idUsuario != null) {
             return usuarioRepository.findById(idUsuario)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (nome != null){
+        if (nome != null) {
             return usuarioRepository.findByNome(nome)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (cargo != null){
+        if (cargo != null) {
             return usuarioRepository.findByCargo(cargo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (email != null){
+        if (email != null) {
             return usuarioRepository.findByEmail(email)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (ativo != null){
+        if (ativo != null) {
             return usuarioRepository.findByAtivo(ativo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        return usuarioRepository.findAll()
-                .stream()
-                .map(UsuarioResponseDTO::fromEntity)
-                .toList();
-        
+        return List.of(); // fallback de segurança
     }
+
 
 
     public UsuarioResponseDTO deletarUsuario(String idUsuario){
