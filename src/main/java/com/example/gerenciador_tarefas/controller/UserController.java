@@ -8,6 +8,7 @@ import com.example.gerenciador_tarefas.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +21,9 @@ public class UserController {
 
 
     @PostMapping("/criar-gestor")
-    public ResponseEntity criarGestor(UsuarioGestorRequestDTO dto){
-        UsuarioGestorResponseDTO usuarioService;
+    public ResponseEntity <UsuarioGestorResponseDTO> criarGestor(@RequestBody UsuarioGestorRequestDTO dto){
+        UsuarioGestorResponseDTO usariogestor=usuarioService.criarAdm(dto);
+        return ResponseEntity.status(201).body(usariogestor);
 
     }
 
