@@ -53,6 +53,9 @@ public class TarefaService {
 
             tarefa.setStatus(dados.status());
             tarefa.setTempoUtilizado(dados.tempoUtilizado());
+            if(tarefa.getTempoUtilizado().isPositive()){
+                tarefa.setStatus(StatusTarefa.EM_ANDAMENTO);
+            }
 
             AtualizarCard atualizarCard = new AtualizarCard();
             atualizarCard.setData(LocalDateTime.now());
@@ -73,6 +76,7 @@ public class TarefaService {
 
     }
 
+    //método que o gestor atualiza a tarefa(diferentes usuarios alteram partes diferentes de uma tarefa
     public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String idTarefa) {
         //pega o usuario que esta logado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -217,12 +221,12 @@ public class TarefaService {
         Usuario usuarioRecebe = usuarioRepository.findById(idUsuariorecebe)
                 .orElseThrow(() -> new UserNotFoundException(idUsuariorecebe));
 
-        if(usuarioEnvia.getCargo().equals(Cargo.GESTOR)){
-            usuarioRecebe.setCargo(Cargo.COLABORADORRESPONSAVEL);
-        }
-
         if(usuarioRecebe.getFerias() != null){
             throw new UsuarioInativoException();
+        }
+
+        if(usuarioEnvia.getCargo().equals(Cargo.GESTOR)){
+            usuarioRecebe.setCargo(Cargo.COLABORADORRESPONSAVEL);
         }
 
         //Usuario que envia deve estar de ferias
@@ -264,8 +268,6 @@ public class TarefaService {
 
         usuarioRepository.save(usuarioRecebe);
         usuarioRepository.save(usuarioEnvia);
-
-
 
     }
 
