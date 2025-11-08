@@ -223,7 +223,9 @@ public class TarefaService {
 
     //Método gestor atribui tarefa para um usuario específico
     @Transactional
-    public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario) {
+    public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
         log.info("Iniciando atribuicao de tarefa para usuario, validando usuario...");
         if (usuario.getAtivo() && usuario.getFerias() == null) {
 
@@ -262,7 +264,7 @@ public class TarefaService {
                 .orElseThrow(() -> new TarefaNaoEncontradaException());
 
         log.info("Tarefa encontrada, chamando metodo de atribuicao de tarefa...");
-        return atribuirTarefa(idTarefa, usuario.getIdUsuario(), usuario);
+        return atribuirTarefa(idTarefa, usuario.getIdUsuario());
     }
 
     //método de transferir tarefas entre usuario
