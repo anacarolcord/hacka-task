@@ -19,5 +19,5 @@ public class Comentario {
     private String id;
     private String mensagem;
     private LocalDateTime dataComentario;
-    private Usuario usuario;
+    private String usuario;
 }

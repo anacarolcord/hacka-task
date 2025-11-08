@@ -31,8 +31,8 @@ public class Tarefa {
 
     private Historico historico;
 
-    private Usuario usuario;
-
     private List<Comentario> comentarios;
+
+    private String usuarioCpf;
 
 }
