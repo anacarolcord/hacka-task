@@ -225,7 +225,6 @@ public class TarefaService {
     @Transactional
     public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario) {
         log.info("Iniciando atribuicao de tarefa para usuario, validando usuario...");
-        Tarefa atualizada = null;
         if (usuario.getAtivo() && usuario.getFerias() == null) {
 
             log.info("Usuario validado, buscando no DB...");
@@ -240,15 +239,14 @@ public class TarefaService {
             u.getTarefas().add(t);
             t.setDataDeAtualizacao(LocalDate.now());
 
-            atualizada = repository.save(t);
-            usuarioRepository.save(u);;
-        } else{
+            repository.save(t);
+            usuarioRepository.save(u);
+            log.info("Tarefa persistida no DB, finalizando atribuicao");
+            return TarefaResponseDto.fromEntity(t);
+        } else {
             log.error("Usuario inativo");
             throw new UsuarioInativoException();
         }
-
-        log.info("Tarefa persistida no DB, finalizando atribuicao");
-        return TarefaResponseDto.fromEntity(atualizada);
     }
 
     //método usuário atribui uma tarefa a si mesmo
@@ -306,7 +304,7 @@ public class TarefaService {
                     .filter(tarefa -> tarefa.getStatus().equals(StatusTarefa.EM_ANDAMENTO) || tarefa.getStatus().equals(StatusTarefa.PENDENTE))
                     .toList();
 
-        } else{
+        } else {
             log.error("Usuario inativo");
             throw new AcessoNaoAutorizadoException();
         }
