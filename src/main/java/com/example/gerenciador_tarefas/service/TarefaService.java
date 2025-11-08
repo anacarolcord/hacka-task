@@ -35,13 +35,12 @@ public class TarefaService {
         Tarefa tarefa = repository.findById(idTarefa)
                 .orElseThrow(TarefaNaoEncontradaException::new);
 
-        if (usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.COLABORADOR)) {
+        if (usuario.getAtivo() && usuario.getCargo().equals(Cargo.COLABORADOR)) {
             tarefa.setStatus(dados.status());
             tarefa.setTempoUtilizado(dados.tempoUtilizado());
         }
 
         if (usuario.getAtivo()
-                && !usuario.getFerias()
                 && (usuario.getCargo().equals(Cargo.GESTOR)
                 || usuario.getCargo().equals(Cargo.COLABORADORRESPONSAVEL))) {
 
@@ -53,7 +52,6 @@ public class TarefaService {
         }
 
         if (usuario.getAtivo()
-                && !usuario.getFerias()
                 && usuario.getCargo().equals(Cargo.ADMIN)) {
 
             tarefa.setNome(dados.nome());

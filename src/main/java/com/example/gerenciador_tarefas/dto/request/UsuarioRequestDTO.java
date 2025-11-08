@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.dto.request;
 
+import com.example.gerenciador_tarefas.entity.Ferias;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import jakarta.validation.constraints.Email;
@@ -20,7 +21,7 @@ public record UsuarioRequestDTO(
         String email,
         @NotBlank(message = "A senha não pode ser nulo!")
         String senha,
-        Boolean ferias
+        Ferias ferias
 ) {
 
     public Usuario toEntity(String senha){

@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.dto.response;
 
+import com.example.gerenciador_tarefas.entity.Ferias;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 
@@ -10,7 +11,7 @@ public record UsuarioResponseDTO(
         String cpf,
         String email,
         Boolean ativo,
-        Boolean ferias
+        Ferias ferias
 ) {
     public static UsuarioResponseDTO fromEntity(Usuario usuario){
         return new UsuarioResponseDTO(

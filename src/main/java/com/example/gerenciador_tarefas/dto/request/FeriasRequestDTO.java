@@ -3,11 +3,11 @@ package com.example.gerenciador_tarefas.dto.request;
 import com.example.gerenciador_tarefas.entity.Ferias;
 import com.example.gerenciador_tarefas.entity.Usuario;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record FeriasRequestDTO(
-        LocalDate dataInicio,
-        LocalDate dataFim
+        LocalDateTime dataInicio,
+        LocalDateTime dataFim
 ) {
     public Ferias toEntity(){
         Ferias ferias = new Ferias();
