@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-@Document(collation = "tarefa")
+@Document(collection = "tarefa")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
