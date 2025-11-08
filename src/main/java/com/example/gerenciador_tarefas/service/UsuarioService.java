@@ -87,4 +87,17 @@ public class UsuarioService {
         }
         throw new UserNotFoundException(idUsuario);
     }
+
+
+
+    public UsuarioResponseDTO atualizarSenha(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setSenha(request.senha());
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
+    }
 }
