@@ -6,12 +6,10 @@ import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
 import com.example.gerenciador_tarefas.dto.response.CriarTarefaResponse;
 import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
-import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.service.TarefaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
