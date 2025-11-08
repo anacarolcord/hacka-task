@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->authorize
                         .requestMatchers("/login").permitAll()
+                        .requestMatchers("/tarefas/gestores").hasRole("GESTOR")
                         .requestMatchers("/tarefas/criar-tarefa").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/tarefas/listar-tarefas").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/usuarios/admin").hasRole("ADMIN")
@@ -36,6 +37,11 @@ public class SecurityConfig {
                         .requestMatchers("/usuarios/delete/**").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/usuarios/gestor").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/atualizar/cargo/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
