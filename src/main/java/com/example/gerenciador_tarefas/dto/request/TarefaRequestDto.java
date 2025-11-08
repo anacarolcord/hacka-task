@@ -25,7 +25,6 @@ public record TarefaRequestDto (
         tarefa.setStatus(StatusTarefa.PENDENTE);
         tarefa.setTempoEstimado(this.tempoEstimado);
         tarefa.setTempoUtilizado(this.tempoUtilizado);
-        tarefa.setUsuario(usuario);
 
         return tarefa;
     }

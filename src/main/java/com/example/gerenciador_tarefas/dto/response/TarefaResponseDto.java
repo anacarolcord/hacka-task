@@ -14,8 +14,7 @@ public record TarefaResponseDto(
         LocalDate dataDeAtualizacao,
         StatusTarefa status,
         Duration tempoEstimado,
-        Duration tempoUtilizado,
-        Usuario usuario
+        Duration tempoUtilizado
 ) {
     public static TarefaResponseDto fromEntity(Tarefa tarefa){
         return new TarefaResponseDto(tarefa.getIdTarefa(),
@@ -24,7 +23,6 @@ public record TarefaResponseDto(
                 tarefa.getDataDeAtualizacao(),
                 tarefa.getStatus(),
                 tarefa.getTempoEstimado(),
-                tarefa.getTempoUtilizado(),
-                tarefa.getUsuario());
+                tarefa.getTempoUtilizado());
     }
 }

@@ -11,9 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Transferencia {
 
-    private Usuario emissor;
+    private String emissorCpf;
 
-    private Usuario receptor;
+    private String receptorCpf;
 
     private String motivo;
 

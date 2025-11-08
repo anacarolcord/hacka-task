@@ -11,7 +11,6 @@ import com.example.gerenciador_tarefas.repository.TarefaRepository;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +80,7 @@ public class TarefaService {
     }
 
     //método que o gestor atualiza a tarefa(diferentes usuarios alteram partes diferentes de uma tarefa
+    @Transactional
     public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String idTarefa) {
         //pega o usuario que esta logado
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -95,7 +95,6 @@ public class TarefaService {
             tarefa.setDescricao(dados.descricao());
             tarefa.setStatus(dados.status());
             tarefa.setTempoEstimado(dados.tempoEstimado());
-            tarefa.setUsuario(dados.usuario());
 
             AtualizarCard atualizarCard = new AtualizarCard();
             atualizarCard.setData(LocalDateTime.now());
@@ -105,7 +104,16 @@ public class TarefaService {
 
             historico.setStatusHistorico(atualizarCard);
 
+            if(usuario.getTarefas() == null) {
+                usuario.setTarefas(List.of(tarefa));
+            }else{
+                List<Tarefa> tarefas = usuario.getTarefas();
+                tarefas.add(tarefa);
+                usuario.setTarefas(tarefas);
+            }
+
             repository.save(tarefa);
+            usuarioRepository.save(usuario);
 
         }
         return TarefaResponseDto.fromEntity(tarefa);
@@ -145,7 +153,7 @@ public class TarefaService {
 
         if (usuario.getAtivo() && usuario.getFerias()==null) {
 
-            tarefasPorUsuario = repository.findAllByUsuario(usuario)
+            tarefasPorUsuario = repository.findAllByUsuarioCpf(usuario.getCpf())
                     .stream()
                     .map(tarefa -> TarefaResponseDto.fromEntity(tarefa))
                     .collect(Collectors.toList());
@@ -171,7 +179,7 @@ public class TarefaService {
                     .orElseThrow(() -> new UserNotFoundException(idUsuario));
 
 
-            tarefasPeloIdUsuario = repository.findAllByUsuario(usuario)
+            tarefasPeloIdUsuario = repository.findAllByUsuarioCpf(usuario.getCpf())
                     .stream()
                     .map(tarefa -> TarefaResponseDto.fromEntity(tarefa))
                     .collect(Collectors.toList());
@@ -220,7 +228,7 @@ public class TarefaService {
 
     //método de transferir tarefas entre usuario
     @Transactional
-    public void transferirTarefa(String idUsuariorecebe, String idUsuarioenvia) {
+    public void transferirTarefa(String idUsuariorecebe, String idUsuarioenvia, String motivo) {
 
         Usuario usuarioEnvia = usuarioRepository.findById(idUsuarioenvia)
                 .orElseThrow(() -> new UserNotFoundException(idUsuarioenvia));
@@ -235,6 +243,10 @@ public class TarefaService {
         if(usuarioEnvia.getCargo().equals(Cargo.GESTOR)){
             usuarioRecebe.setCargo(Cargo.COLABORADORRESPONSAVEL);
         }
+        if(usuarioEnvia.getCargo().equals(Cargo.COLABORADORRESPONSAVEL) && usuarioRecebe.getCargo().equals(Cargo.GESTOR)){
+            usuarioEnvia.setCargo(Cargo.COLABORADOR);
+        }
+
 
         //Usuario que envia deve estar de ferias
         //identifico as tarefas com status em andamento e status pendentes atribuidas a ele
@@ -254,9 +266,9 @@ public class TarefaService {
 
         Transferencia transferencia = new Transferencia();
 
-        transferencia.setEmissor(usuarioEnvia);
-        transferencia.setReceptor(usuarioRecebe);
-        transferencia.setMotivo("Férias");
+        transferencia.setEmissorCpf(usuarioEnvia.getCpf());
+        transferencia.setReceptorCpf(usuarioRecebe.getCpf());
+        transferencia.setMotivo(motivo);
 
         Historico historico = new Historico();
 
@@ -308,7 +320,7 @@ public class TarefaService {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new UserNotFoundException(usuarioId));
 
-        var tarefas = repository.findAllByUsuario(usuario);
+        var tarefas = repository.findAllByUsuarioCpf(usuario.getCpf());
 
         long pendentes = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.PENDENTE).count();
         long andamento = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.EM_ANDAMENTO).count();

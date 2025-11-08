@@ -21,7 +21,7 @@ public class ComentarioService {
     public ComentarioResponse criarComentario(ComentarioRequest request){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) auth.getPrincipal();
-        Comentario comentario = request.toEntity();
+        Comentario comentario = request.toEntity(usuario.getNome());
         Tarefa tarefa = tarefaRepository.findById(request.tarefaId()).get();
 
         tarefaRepository.save(tarefa);
