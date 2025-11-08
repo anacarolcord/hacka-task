@@ -18,6 +18,4 @@ public class AtualizarCard {
 
     private StatusTarefa status;
 
-    private Tarefa tarefa;
-
 }
