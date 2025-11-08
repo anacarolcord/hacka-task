@@ -7,6 +7,7 @@ import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
+import com.example.gerenciador_tarefas.exception.CpfDuplicadoException;
 import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,9 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
     public UsuarioResponseDTO criarColaborador(CriarColaboradorRequest request){
+        if(usuarioRepository.findByCpf(request.cpf()) != null){
+            throw new CpfDuplicadoException(request.cpf());
+        }
         String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
 
         Usuario usuario = request.toEntity(senhaCriptografada);
@@ -136,6 +140,9 @@ public class UsuarioService {
 
 
     public UsuarioGestorResponseDTO criarGestor(UsuarioGestorRequestDTO request){
+        if(usuarioRepository.findByCpf(request.cpf()) != null){
+            throw new CpfDuplicadoException(request.cpf());
+        }
         String senha= new BCryptPasswordEncoder().encode(request.senha());
         Usuario usuarioadm = request.toEntity(senha);
         usuarioRepository.save((usuarioadm));

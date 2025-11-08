@@ -2,24 +2,18 @@ package com.example.gerenciador_tarefas.service;
 
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
-import com.example.gerenciador_tarefas.entity.AtualizarCard;
-import com.example.gerenciador_tarefas.entity.Historico;
 import com.example.gerenciador_tarefas.entity.Tarefa;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
-import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
 import com.example.gerenciador_tarefas.exception.AcessoNaoAutorizadoException;
 import com.example.gerenciador_tarefas.exception.TarefaNaoEncontradaException;
 import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.exception.UsuarioInativoException;
-import com.example.gerenciador_tarefas.repository.HistoricoRepository;
 import com.example.gerenciador_tarefas.repository.TarefaRepository;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,13 +24,9 @@ public class TarefaService {
 
     private final TarefaRepository repository;
     private final UsuarioRepository usuarioRepository;
-    private final HistoricoRepository historicoRepository;
 
 
-public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario){
-    if(usuario.getCargo().equals(Cargo.COLABORADOR)){
-        throw new AcessoNaoAutorizadoException();
-    }
+public TarefaResponseDto salvarTarefa(TarefaRequestDto dados){
      Tarefa tarefa = dados.toEntity();
 
      repository.save(tarefa);
@@ -44,30 +34,16 @@ public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario){
      return TarefaResponseDto.fromEntity(tarefa);
 }
 
-@Transactional
 public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, String idTarefa, Usuario usuario){
     Tarefa tarefa = repository.findById(idTarefa)
             .orElseThrow(TarefaNaoEncontradaException::new);
 
-    if( usuario.getAtivo() && usuario.getFerias()==null) {
-
+    if( usuario.getAtivo() && !usuario.getFerias()) {
         tarefa.setStatus(dados.status());
         tarefa.setTempoUtilizado(dados.tempoUtilizado());
-
-        AtualizarCard atualizarCard = new AtualizarCard();
-        atualizarCard.setTarefa(tarefa);
-        atualizarCard.setData(LocalDateTime.now());
-        atualizarCard.setStatus(tarefa.getStatus());
-
-        Historico historico = new Historico();
-
-        historico.setStatusHistorico(atualizarCard);
-
-        historicoRepository.save(historico);
-
     }else throw new AcessoNaoAutorizadoException();
 
-
+//mandar pro historico
 
     return TarefaResponseDto.fromEntity(tarefa);
 
@@ -78,25 +54,13 @@ public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String id
             .orElseThrow(()-> new TarefaNaoEncontradaException());
 
     if(usuario.getAtivo()
-            && usuario.getFerias()==null){
+            && !usuario.getFerias()){
 
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
         tarefa.setStatus(dados.status());
         tarefa.setTempoEstimado(dados.tempoEstimado());
         tarefa.setUsuario(dados.usuario());
-
-        AtualizarCard atualizarCard = new AtualizarCard();
-        atualizarCard.setTarefa(tarefa);
-        atualizarCard.setData(LocalDateTime.now());
-        atualizarCard.setStatus(tarefa.getStatus());
-
-        Historico historico = new Historico();
-
-        historico.setStatusHistorico(atualizarCard);
-
-        historicoRepository.save(historico);
-
     }
 //mandar pro historico
     return TarefaResponseDto.fromEntity(tarefa);
@@ -110,7 +74,7 @@ public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, Str
 
 
     if(usuario.getAtivo()
-            && usuario.getFerias()==null) {
+            && !usuario.getFerias()) {
 
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
@@ -118,17 +82,6 @@ public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, Str
         tarefa.setTempoEstimado(dados.tempoEstimado());
         tarefa.setUsuario(dados.usuario());
         tarefa.setTempoUtilizado(dados.tempoUtilizado());
-
-        AtualizarCard atualizarCard = new AtualizarCard();
-        Historico historico = new Historico();
-
-        historico.setTarefa(tarefa);
-        atualizarCard.setData(LocalDateTime.now());
-        atualizarCard.setStatus(tarefa.getStatus());
-
-        historico.setStatusHistorico(atualizarCard);
-
-        historicoRepository.save(historico);
 
     }
 
@@ -144,7 +97,7 @@ public List<TarefaResponseDto> listarTodasGestor(Usuario usuario) {
     List<TarefaResponseDto> todas = new ArrayList<>();
 
     if (usuario.getAtivo()
-            && usuario.getFerias()==null) {
+            && !usuario.getFerias()) {
 
         todas = repository.findAll()
                 .stream()
@@ -161,7 +114,7 @@ public List<TarefaResponseDto> listarTodasUsuario(Usuario usuario){
 
     List <TarefaResponseDto> tarefasPorUsuario = new ArrayList<>();
 
-    if(usuario.getAtivo() && usuario.getFerias()==null ) {
+    if(usuario.getAtivo() && !usuario.getFerias() ) {
 
          tarefasPorUsuario = repository.findAllByUsuario(usuario)
                 .stream()
@@ -180,7 +133,7 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
 
     List<TarefaResponseDto> tarefasPeloIdUsuario = new ArrayList<>();
 
-    if (usuario.getAtivo() && usuario.getFerias()==null) {
+    if (usuario.getAtivo() && !usuario.getFerias()) {
 
         Usuario u = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException(idUsuario));
@@ -195,75 +148,6 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
 
     return tarefasPeloIdUsuario;
 }
-
-//Método gestor atribui tarefa para um usuario específico
-public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario){
-
-    Tarefa atualizada = null;
-    if(usuario.getAtivo() && usuario.getFerias()==null){
-
-        Usuario u = usuarioRepository.findById(idUsuario)
-                .orElseThrow(()-> new UserNotFoundException(idUsuario));
-
-        Tarefa t = repository.findById(idTarefa)
-                .orElseThrow(()-> new TarefaNaoEncontradaException());
-
-        u.getTarefas().add(t);
-
-        atualizada = repository.save(t);
-
-    }else throw new UsuarioInativoException();
-
-    return TarefaResponseDto.fromEntity(atualizada);
-}
-
-//método usuário atribui uma tarefa a si mesmo
-    public TarefaResponseDto pegarTarefa(Usuario usuario, String idTarefa){
-
-    Tarefa t = repository.findById(idTarefa)
-            .orElseThrow(()-> new TarefaNaoEncontradaException());
-
-    return atribuirTarefa(idTarefa, usuario.getIdUsuario(), usuario);
-}
-
-//método de transferir tarefas para usuario
-    public TarefaResponseDto transferirTarefa(String idUsuariorecebe, String idUsuarioenvia){
-
-        Usuario usuarioEnvia = usuarioRepository.findById(idUsuarioenvia)
-                .orElseThrow(()-> new UserNotFoundException(idUsuarioenvia));
-
-        Usuario usuarioRecebe = usuarioRepository.findById(idUsuariorecebe)
-                .orElseThrow(()-> new UserNotFoundException(idUsuariorecebe));
-
-        //Usuario que envia deve estar de ferias
-        //identifico as tarefas com status em andamento e status pendentes atribuidas a ele
-
-        List <Tarefa> tarefasPendentesEmAndamento = new ArrayList<>();
-
-        if(usuarioEnvia.getFerias()==null){
-
-            tarefasPendentesEmAndamento = usuarioEnvia.getTarefas()
-                    .stream()
-                    .filter(tarefa -> tarefa.getStatus().equals(StatusTarefa.EM_ANDAMENTO) || tarefa.getStatus().equals(StatusTarefa.PENDENTE))
-                    .toList();
-
-            if(usuarioRecebe.getFerias()==null){
-                usuarioRecebe.setTarefas(tarefasPendentesEmAndamento);
-            }else throw new UsuarioInativoException();
-
-        }else throw new AcessoNaoAutorizadoException();
-
-        //salvar alteracoes
-
-        usuarioRepository.save(usuarioRecebe);
-        usuarioRepository.save(usuarioEnvia);
-
-
-
-
-
-
-    }
 
 
 }

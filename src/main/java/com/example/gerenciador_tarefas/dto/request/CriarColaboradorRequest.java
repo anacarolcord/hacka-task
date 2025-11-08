@@ -4,8 +4,6 @@ import com.example.gerenciador_tarefas.entity.Ferias;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 
-import java.util.ArrayList;
-
 public record CriarColaboradorRequest(
         String nome,
         String cpf,
