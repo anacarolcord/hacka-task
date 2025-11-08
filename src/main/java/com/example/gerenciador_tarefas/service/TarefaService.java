@@ -238,6 +238,7 @@ public class TarefaService {
             log.info("Tarefa encontrada, atualizando e persistindo no DB...");
             u.getTarefas().add(t);
             t.setDataDeAtualizacao(LocalDate.now());
+            t.setUsuarioCpf(u.getCpf());
 
             repository.save(t);
             usuarioRepository.save(u);
