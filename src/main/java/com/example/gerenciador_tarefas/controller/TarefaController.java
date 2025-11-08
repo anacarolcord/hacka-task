@@ -1,11 +1,9 @@
 package com.example.gerenciador_tarefas.controller;
 
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
-import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
-import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.service.TarefaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,32 +21,40 @@ public class TarefaController {
     private final TarefaService service;
 
 
-    @PostMapping("/criar-tarefa")
+    @PostMapping
     public ResponseEntity <TarefaResponseDto> criarTarefa(@RequestBody TarefaRequestDto dto) {
         TarefaResponseDto tarefa= service.salvarTarefa(dto);
         return ResponseEntity.status(201).body(tarefa);
     }
 
-    @GetMapping("/listar-tarefas")
-    public ResponseEntity listartarefas(){
-        List<TarefaResponseDto>  tarefas =service.listarTodasGestor();
+    @GetMapping("/gestores")
+    public ResponseEntity listarTarefasGestor(Usuario usuario){
+        List<TarefaResponseDto>  tarefas =service.listarTodasGestor(usuario);
+        return ResponseEntity.status(200).body(tarefas);
+    }
+    @GetMapping("/usuarios")
+    public ResponseEntity listarTarefasUsuarios(Usuario usuario){
+        List<TarefaResponseDto>  tarefas =service.listarTodasUsuario(usuario);
         return ResponseEntity.status(200).body(tarefas);
     }
 
-    @GetMapping("/ativas")
-    public ResponseEntity<List<TarefaResponseDto>> listarTarefasPendentesEmAndamento() {
-        List<TarefaResponseDto> tarefas = service.listarTarefasPendentesEmAndamento();
-        return ResponseEntity.ok(tarefas);
+    @PatchMapping("/atulizar/gestor/{id}")
+    public ResponseEntity atualizarTarefa(@RequestBody TarefaRequestDto dto, @PathVariable("id") String id, Usuario usuario){
+        TarefaResponseDto tarefaAtualizada = service.atualizarTarefaGestor(dto, id,  usuario);
+        return ResponseEntity.status(200).body(tarefaAtualizada);
     }
 
-    @GetMapping("/historico/{usuarioId}")
-    public ResponseEntity<HistoricoUsuarioDto> gerarHistorico(@PathVariable String usuarioId) {
-        try {
-            HistoricoUsuarioDto historico = service.gerarHistoricoPorUsuario(usuarioId);
-            return ResponseEntity.ok(historico);
-        } catch (UserNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @PatchMapping("/atulizar/colaborador/{id}")
+    public ResponseEntity atualizarTarefaColaborador(@RequestBody TarefaRequestDto dto, @PathVariable("id") String id, Usuario usuario){
+        TarefaResponseDto tarefaAtualizada = service.atualizarTarefaColaborador(dto, id,  usuario);
+        return ResponseEntity.status(200).body(tarefaAtualizada);
     }
+
+    @GetMapping("/listar/usuario/{id}")
+    public ResponseEntity listarTarefasPorUsuario(Usuario usuario, @PathVariable("id") String id){
+        List<TarefaResponseDto>  tarefas =service.listarTodasPeloIdUsuario(usuario, id);
+        return ResponseEntity.status(200).body(tarefas);
+    }
+
 }
 
