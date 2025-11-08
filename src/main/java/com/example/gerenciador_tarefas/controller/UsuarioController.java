@@ -22,7 +22,7 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    @PostMapping
+    @PostMapping("/gestor")
     public ResponseEntity<UsuarioResponseDTO> cadastrarColaborador(@RequestBody @Valid CriarColaboradorRequest request){
         UsuarioResponseDTO response = usuarioService.criarColaborador(request);
 
