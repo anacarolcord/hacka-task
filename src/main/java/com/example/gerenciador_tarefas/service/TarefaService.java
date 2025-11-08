@@ -49,7 +49,7 @@ public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, Stri
     Tarefa tarefa = repository.findById(idTarefa)
             .orElseThrow(TarefaNaoEncontradaException::new);
 
-    if( usuario.getAtivo() && !usuario.getFerias()) {
+    if( usuario.getAtivo() && usuario.getFerias()==null) {
 
         tarefa.setStatus(dados.status());
         tarefa.setTempoUtilizado(dados.tempoUtilizado());
@@ -78,7 +78,7 @@ public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String id
             .orElseThrow(()-> new TarefaNaoEncontradaException());
 
     if(usuario.getAtivo()
-            && !usuario.getFerias()){
+            && usuario.getFerias()==null){
 
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
@@ -110,7 +110,7 @@ public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, Str
 
 
     if(usuario.getAtivo()
-            && !usuario.getFerias()) {
+            && usuario.getFerias()==null) {
 
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
@@ -144,7 +144,7 @@ public List<TarefaResponseDto> listarTodasGestor(Usuario usuario) {
     List<TarefaResponseDto> todas = new ArrayList<>();
 
     if (usuario.getAtivo()
-            && !usuario.getFerias()) {
+            && usuario.getFerias()==null) {
 
         todas = repository.findAll()
                 .stream()
@@ -161,7 +161,7 @@ public List<TarefaResponseDto> listarTodasUsuario(Usuario usuario){
 
     List <TarefaResponseDto> tarefasPorUsuario = new ArrayList<>();
 
-    if(usuario.getAtivo() && !usuario.getFerias() ) {
+    if(usuario.getAtivo() && usuario.getFerias()==null ) {
 
          tarefasPorUsuario = repository.findAllByUsuario(usuario)
                 .stream()
@@ -180,7 +180,7 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
 
     List<TarefaResponseDto> tarefasPeloIdUsuario = new ArrayList<>();
 
-    if (usuario.getAtivo() && !usuario.getFerias()) {
+    if (usuario.getAtivo() && usuario.getFerias()==null) {
 
         Usuario u = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException(idUsuario));
@@ -200,7 +200,7 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
 public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario){
 
     Tarefa atualizada = null;
-    if(usuario.getAtivo() && !usuario.getFerias()){
+    if(usuario.getAtivo() && usuario.getFerias()==null){
 
         Usuario u = usuarioRepository.findById(idUsuario)
                 .orElseThrow(()-> new UserNotFoundException(idUsuario));
@@ -240,14 +240,14 @@ public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuar
 
         List <Tarefa> tarefasPendentesEmAndamento = new ArrayList<>();
 
-        if(usuarioEnvia.getFerias()){
+        if(usuarioEnvia.getFerias()==null){
 
             tarefasPendentesEmAndamento = usuarioEnvia.getTarefas()
                     .stream()
                     .filter(tarefa -> tarefa.getStatus().equals(StatusTarefa.EM_ANDAMENTO) || tarefa.getStatus().equals(StatusTarefa.PENDENTE))
                     .toList();
 
-            if(!usuarioRecebe.getFerias()){
+            if(usuarioRecebe.getFerias()==null){
                 usuarioRecebe.setTarefas(tarefasPendentesEmAndamento);
             }else throw new UsuarioInativoException();
 
