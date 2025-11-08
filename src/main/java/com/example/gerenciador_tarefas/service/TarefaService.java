@@ -307,6 +307,7 @@ public class TarefaService {
                     .filter(tarefa -> tarefa.getStatus().equals(StatusTarefa.EM_ANDAMENTO) || tarefa.getStatus().equals(StatusTarefa.PENDENTE))
                     .toList();
 
+            usuarioEnvia.setFerias(null);
         } else {
             log.error("Usuario inativo");
             throw new AcessoNaoAutorizadoException();
