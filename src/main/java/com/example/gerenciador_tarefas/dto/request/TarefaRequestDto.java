@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.dto.request;
 
+import com.example.gerenciador_tarefas.entity.Comentario;
 import com.example.gerenciador_tarefas.entity.Tarefa;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
@@ -14,7 +15,8 @@ public record TarefaRequestDto (
         StatusTarefa status,
         Duration tempoEstimado,
         Duration tempoUtilizado,
-        Usuario usuario
+        String idUsuario,
+        Comentario comentario
 ){
     public Tarefa toEntity(){
         Tarefa tarefa = new Tarefa();
@@ -25,6 +27,8 @@ public record TarefaRequestDto (
         tarefa.setStatus(StatusTarefa.PENDENTE);
         tarefa.setTempoEstimado(this.tempoEstimado);
         tarefa.setTempoUtilizado(this.tempoUtilizado);
+        tarefa.setUsuarioCpf(this.idUsuario);
+        tarefa.getComentarios().add(this.comentario);
 
         return tarefa;
     }

@@ -1,7 +1,9 @@
 package com.example.gerenciador_tarefas.controller;
 
+import com.example.gerenciador_tarefas.dto.request.AtualizarTarefaColaboradorRequest;
 import com.example.gerenciador_tarefas.dto.request.CriarTarefaRequest;
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.AtualizarTarefaColaboradorResponse;
 import com.example.gerenciador_tarefas.dto.response.CriarTarefaResponse;
 import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
@@ -49,8 +51,8 @@ public class TarefaController {
     }
 
     @PatchMapping("/atualizar/colaborador/{id}")
-    public ResponseEntity atualizarTarefaColaborador(@RequestBody TarefaRequestDto dto, @PathVariable("id") String id ){
-        TarefaResponseDto tarefaAtualizada = service.atualizarTarefaColaborador(dto, id);
+    public ResponseEntity atualizarTarefaColaborador(@RequestBody AtualizarTarefaColaboradorRequest dto, @PathVariable("id") String id ){
+        AtualizarTarefaColaboradorResponse tarefaAtualizada = service.atualizarTarefaDeSiMesmo(dto, id);
         return ResponseEntity.status(200).body(tarefaAtualizada);
     }
 

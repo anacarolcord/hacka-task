@@ -1,7 +1,9 @@
 package com.example.gerenciador_tarefas.service;
 
+import com.example.gerenciador_tarefas.dto.request.AtualizarTarefaColaboradorRequest;
 import com.example.gerenciador_tarefas.dto.request.CriarTarefaRequest;
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.AtualizarTarefaColaboradorResponse;
 import com.example.gerenciador_tarefas.dto.response.CriarTarefaResponse;
 import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
@@ -33,6 +35,7 @@ public class TarefaService {
 
     private final TarefaRepository repository;
     private final UsuarioRepository usuarioRepository;
+    private final ComentarioService comentarioService;
 
     public CriarTarefaResponse salvarTarefa(CriarTarefaRequest dados) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -50,8 +53,8 @@ public class TarefaService {
     }
 
     @Transactional
-    //método que o colaborador atualiza a tarefa(diferentes usuarios alteram partes diferentes de uma tarefa
-    public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, String idTarefa) {
+    //método que o usuário atualiza a prória tarefa
+    public AtualizarTarefaColaboradorResponse atualizarTarefaDeSiMesmo(AtualizarTarefaColaboradorRequest dados, String idTarefa) {
         //pega o usuario que esta logado
         log.info("Iniciando atualizacao de tarefa pelo Colaborador, verificando usuario da requisicao...");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -62,7 +65,7 @@ public class TarefaService {
                 .orElseThrow(TarefaNaoEncontradaException::new);
 
         log.info("Tarefa encontrada, validando tarefa...");
-        if (!dados.status().equals(StatusTarefa.CONCLUIDA) && dados.tempoEstimado().isPositive()) {
+        if (!dados.statusTarefa().equals(StatusTarefa.CONCLUIDA) && dados.tempoUtilizado().isPositive()) {
             throw new ErroAtualizarTarefaException();
         }
 
@@ -70,8 +73,9 @@ public class TarefaService {
         if (usuario.getAtivo() && usuario.getFerias() == null) {
 
             log.info("Usuario validado, mapeando tarefa e historico...");
-            tarefa.setStatus(dados.status());
+            tarefa.setStatus(dados.statusTarefa());
             tarefa.setTempoUtilizado(dados.tempoUtilizado());
+            tarefa.getComentarios().add(dados.comentario());
 
             AtualizarCard atualizarCard = new AtualizarCard();
             atualizarCard.setData(LocalDateTime.now());
@@ -91,10 +95,10 @@ public class TarefaService {
             throw new AcessoNaoAutorizadoException();
         }
 
-        return TarefaResponseDto.fromEntity(tarefa);
+        return AtualizarTarefaColaboradorResponse.fromEntity(tarefa);
     }
 
-    //método que o gestor atualiza a tarefa(diferentes usuarios alteram partes diferentes de uma tarefa
+    //método que o gestor atualiza uma tarefa completa
     @Transactional
     public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String idTarefa) {
         //pega o usuario que esta logado
@@ -112,8 +116,12 @@ public class TarefaService {
             log.info("Usuario validado, mapeando tarefa e historico...");
             tarefa.setNome(dados.nome());
             tarefa.setDescricao(dados.descricao());
+            tarefa.setDataDeAtualizacao(dados.dataDeAtualizacao());
             tarefa.setStatus(dados.status());
             tarefa.setTempoEstimado(dados.tempoEstimado());
+            tarefa.setTempoUtilizado(dados.tempoUtilizado());
+            tarefa.setUsuarioCpf(dados.idUsuario());
+            tarefa.getComentarios().add(dados.comentario());
 
             AtualizarCard atualizarCard = new AtualizarCard();
             atualizarCard.setData(LocalDateTime.now());
@@ -246,6 +254,7 @@ public class TarefaService {
             u.getTarefas().add(t);
             t.setDataDeAtualizacao(LocalDate.now());
             t.setUsuarioCpf(u.getCpf());
+            t.setStatus(StatusTarefa.PENDENTE);
 
             repository.save(t);
             usuarioRepository.save(u);
