@@ -19,7 +19,6 @@ public class TarefaService {
 
     private final TarefaRepository repository;
 
-
     public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario) {
         if (usuario.getCargo().equals(Cargo.COLABORADOR)) {
             throw new AcessoNaoAutorizadoException();
