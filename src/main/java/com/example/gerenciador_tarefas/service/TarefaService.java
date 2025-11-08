@@ -299,7 +299,7 @@ public class TarefaService {
 
     public HistoricoUsuarioDto gerarHistoricoPorUsuario(String usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFoundException(usuarioId));
 
         var tarefas = repository.findAllByUsuario(usuario);
 

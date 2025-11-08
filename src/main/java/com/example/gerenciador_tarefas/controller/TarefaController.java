@@ -1,9 +1,11 @@
 package com.example.gerenciador_tarefas.controller;
 
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
+import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.service.TarefaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,22 @@ public class TarefaController {
     public ResponseEntity listartarefas(){
         List<TarefaResponseDto>  tarefas =service.listarTodasGestor();
         return ResponseEntity.status(200).body(tarefas);
+    }
+
+    @GetMapping("/ativas")
+    public ResponseEntity<List<TarefaResponseDto>> listarTarefasPendentesEmAndamento() {
+        List<TarefaResponseDto> tarefas = service.listarTarefasPendentesEmAndamento();
+        return ResponseEntity.ok(tarefas);
+    }
+
+    @GetMapping("/historico/{usuarioId}")
+    public ResponseEntity<HistoricoUsuarioDto> gerarHistorico(@PathVariable String usuarioId) {
+        try {
+            HistoricoUsuarioDto historico = service.gerarHistoricoPorUsuario(usuarioId);
+            return ResponseEntity.ok(historico);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
 
