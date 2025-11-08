@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface TarefaRepository extends MongoRepository<Tarefa,String> {
 
-    List<Tarefa> findAllByIdUsuario(String idUsuario);
+    List<Tarefa> findAllByUsuario(Usuario usuario);
 }
