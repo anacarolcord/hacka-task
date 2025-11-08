@@ -7,14 +7,15 @@ import java.time.LocalDateTime;
 
 public record FeriasRequestDTO(
         LocalDateTime dataInicio,
-        LocalDateTime dataFim
+        LocalDateTime dataFim,
+        String idUsuarioReceptor
 ) {
     public Ferias toEntity(){
         Ferias ferias = new Ferias();
 
         ferias.setDataInicio(this.dataInicio);
         ferias.setDataFim(this.dataFim);
-
+        ferias.setIdUsuarioReceptor(this.idUsuarioReceptor);
         return ferias;
     }
 
