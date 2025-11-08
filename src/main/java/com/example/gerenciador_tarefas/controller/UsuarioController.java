@@ -51,7 +51,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/delete/{idUsuario}")
-    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") String idUsuario){
+    public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable String idUsuario){
 
         UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(idUsuario);
         return ResponseEntity.ok(responseDTO);
@@ -81,14 +81,4 @@ public class UsuarioController {
         return ResponseEntity.ok(responseDTO);
 
     }
-
-    @PatchMapping("/atualizar/ferias/{idUsuario}")
-    public ResponseEntity<UsuarioResponseDTO> atualizarFerias(@PathVariable("idUsuario") String idUsuario, @RequestBody UsuarioRequestDTO request){
-
-        UsuarioResponseDTO responseDTO = usuarioService.atualizarFerias(idUsuario, request);
-        return ResponseEntity.ok(responseDTO);
-
-    }
-
-
 }

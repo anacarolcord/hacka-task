@@ -138,16 +138,6 @@ public class UsuarioService {
         throw new UserNotFoundException(idUsuario);
     }
 
-    public UsuarioResponseDTO atualizarFerias(String idUsuario, UsuarioRequestDTO request){
-        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
-        if(usuarioOptional.isPresent()){
-            Usuario usuario = usuarioOptional.get();
-            usuario.setFerias(request.ferias());
-            usuarioRepository.save(usuario);
-            return UsuarioResponseDTO.fromEntity(usuario);
-        }
-        throw new UserNotFoundException(idUsuario);
-    }
 
     public UsuarioGestorResponseDTO criarGestor(UsuarioGestorRequestDTO request){
         if(usuarioRepository.findByCpf(request.cpf()) != null){
