@@ -15,11 +15,12 @@ public record UsuarioRequestDTO(
 
         @NotBlank(message = "O cpf não pode ser nulo!")
         String cpf,
-        @Email
+
         @NotBlank(message = "O email não pode ser nulo!")
         String email,
         @NotBlank(message = "A senha não pode ser nulo!")
-        String senha
+        String senha,
+        Boolean ferias
 ) {
 
     public Usuario toEntity(String senha){
@@ -31,6 +32,7 @@ public record UsuarioRequestDTO(
         usuario.setCpf(this.cpf);
         usuario.setEmail(this.email);
         usuario.setSenha(senha);
+        usuario.setFerias(this.ferias);
 
         return usuario;
 

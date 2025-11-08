@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.service;
 
+import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioResponseDTO criarColaborador(UsuarioRequestDTO request){
+    public UsuarioResponseDTO criarColaborador(CriarColaboradorRequest request){
         String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
 
         Usuario usuario = request.toEntity(senhaCriptografada);
@@ -27,57 +28,122 @@ public class UsuarioService {
         return UsuarioResponseDTO.fromEntity(usuario);
     }
 
-    public List<UsuarioResponseDTO> listarUsuario(UsuarioRequestDTO request){
+    public List<UsuarioResponseDTO> listarUsuario(){
         return usuarioRepository.findAll()
                 .stream()
                 .map(UsuarioResponseDTO::fromEntity)
                 .toList();
     }
 
-    public List<UsuarioResponseDTO> pesquisaUsuarios(String nome, Cargo cargo, String email, Boolean ativo){
+    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo) {
 
-        if (nome != null){
+        int contador = 0;
+        if (idUsuario != null) contador++;
+        if (nome != null) contador++;
+        if (cargo != null) contador++;
+        if (email != null) contador++;
+        if (ativo != null) contador++;
+
+        if (contador == 0) {
+            // Nenhum filtro -> traz tudo
+            return usuarioRepository.findAll()
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
+
+        if (contador > 1) {
+            throw new IllegalArgumentException("Apenas um parâmetro de pesquisa pode ser usado por vez.");
+        }
+
+        // Aqui sabemos que só há um parâmetro preenchido
+        if (idUsuario != null) {
+            return usuarioRepository.findById(idUsuario)
+                    .stream()
+                    .map(UsuarioResponseDTO::fromEntity)
+                    .toList();
+        }
+
+        if (nome != null) {
             return usuarioRepository.findByNome(nome)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (cargo != null){
+        if (cargo != null) {
             return usuarioRepository.findByCargo(cargo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (email != null){
+        if (email != null) {
             return usuarioRepository.findByEmail(email)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        if (ativo != null){
+        if (ativo != null) {
             return usuarioRepository.findByAtivo(ativo)
                     .stream()
                     .map(UsuarioResponseDTO::fromEntity)
                     .toList();
         }
 
-        return usuarioRepository.findAll()
-                .stream()
-                .map(UsuarioResponseDTO::fromEntity)
-                .toList();
-        
+        return List.of(); // fallback de segurança
     }
 
 
-    public UsuarioResponseDTO deletarUsuario(String id){
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        if(usuario.isPresent()){
-            usuario.get().setAtivo(false);
-            return UsuarioResponseDTO.fromEntity(usuario.get());
+
+    public UsuarioResponseDTO deletarUsuario(String idUsuario){
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setAtivo(false);
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
         }
-        throw new UserNotFoundException(id);
+        throw new UserNotFoundException(idUsuario);
     }
+
+
+
+    public UsuarioResponseDTO atualizarSenha(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setSenha(new BCryptPasswordEncoder().encode(request.senha()));
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
+    }
+
+    public UsuarioResponseDTO atualizarCargo(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setCargo(request.cargo());
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
+    }
+
+    public UsuarioResponseDTO atualizarFerias(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setFerias(request.ferias());
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
+    }
+
+
+
+
 }
