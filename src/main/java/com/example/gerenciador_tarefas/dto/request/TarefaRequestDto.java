@@ -1,6 +1,7 @@
 package com.example.gerenciador_tarefas.dto.request;
 
 import com.example.gerenciador_tarefas.entity.Tarefa;
+import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
 
 import java.time.Duration;
@@ -12,18 +13,20 @@ public record TarefaRequestDto (
         LocalDate dataDeAtualizacao,
         StatusTarefa status,
         Duration tempoEstimado,
-        Duration tempoUtilizado
+        Duration tempoUtilizado,
+        Usuario usuario
 ){
-    TarefaRequestDto toEntity(Tarefa tarefa){
+    public Tarefa toEntity(){
+        Tarefa tarefa = new Tarefa();
 
-        TarefaRequestDto dto = new TarefaRequestDto(
-                tarefa.getNome(),
-                tarefa.getDescricao(),
-                tarefa.getDataDeAtualizacao(),
-                tarefa.getStatus(),
-                tarefa.getTempoEstimado(),
-                tarefa.getTempoUtilizado());
+        tarefa.setNome(this.nome);
+        tarefa.setDescricao(this.descricao);
+        tarefa.setDataDeAtualizacao(this.dataDeAtualizacao);
+        tarefa.setStatus(this.status);
+        tarefa.setTempoEstimado(this.tempoEstimado);
+        tarefa.setTempoUtilizado(this.tempoUtilizado);
+        tarefa.setUsuario(usuario);
 
-        return dto;
+        return tarefa;
     }
 }

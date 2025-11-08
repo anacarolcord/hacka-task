@@ -2,6 +2,7 @@ package com.example.gerenciador_tarefas.entity;
 
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -18,6 +19,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Usuario implements UserDetails {
 
     @Id
@@ -28,6 +30,7 @@ public class Usuario implements UserDetails {
     private String cpf;
     private String senha;
     private Boolean ativo = Boolean.TRUE;
+    private Boolean ferias = Boolean.FALSE;
     private List<Tarefa> tarefas = new ArrayList<>();
 
     @Override
