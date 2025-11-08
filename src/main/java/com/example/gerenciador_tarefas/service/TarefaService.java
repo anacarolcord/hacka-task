@@ -1,6 +1,7 @@
 package com.example.gerenciador_tarefas.service;
 
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.entity.*;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -283,6 +285,37 @@ public class TarefaService {
         return TarefaResponseDto.fromEntity(t);
     }
 
+    public List<TarefaResponseDto> listarTarefasPendentesEmAndamento() {
+        List<StatusTarefa> statusAtivos = Arrays.asList(
+                StatusTarefa.PENDENTE,
+                StatusTarefa.EM_ANDAMENTO
+        );
+
+        return repository.findByStatusIn(statusAtivos)
+                .stream()
+                .map(TarefaResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public HistoricoUsuarioDto gerarHistoricoPorUsuario(String usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        var tarefas = repository.findAllByUsuario(usuario);
+
+        long pendentes = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.PENDENTE).count();
+        long andamento = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.EM_ANDAMENTO).count();
+        long concluidas = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.CONCLUIDA).count();
+        long canceladas = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.CANCELADA).count();
+
+        return new HistoricoUsuarioDto(
+                usuario.getNome(),
+                pendentes,
+                andamento,
+                concluidas,
+                canceladas
+        );
+    }
 
 }
 
