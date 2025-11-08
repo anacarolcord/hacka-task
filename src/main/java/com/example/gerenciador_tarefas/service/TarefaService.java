@@ -5,6 +5,7 @@ import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.entity.Tarefa;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
+import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
 import com.example.gerenciador_tarefas.exception.AcessoNaoAutorizadoException;
 import com.example.gerenciador_tarefas.exception.TarefaNaoEncontradaException;
 import com.example.gerenciador_tarefas.exception.UserNotFoundException;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -152,29 +154,21 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
     return tarefasPeloIdUsuario;
 }
 
-//Método gestor atribui tarefa para um usuario específico
-public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario){
+    // Lista todas as tarefas com status PENDENTE ou EM_ANDAMENTO
+    public List<TarefaResponseDto> listarTarefasPendentesEmAndamento() {
+        List<StatusTarefa> statusAtivos = Arrays.asList(
+                StatusTarefa.PENDENTE,
+                StatusTarefa.EM_ANDAMENTO
+        );
 
-    Tarefa atualizada = null;
-    if(usuario.getAtivo() && !usuario.getFerias()){
-
-        Usuario u = usuarioRepository.findById(idUsuario)
-                .orElseThrow(()-> new UserNotFoundException(idUsuario));
-
-        Tarefa t = repository.findById(idTarefa)
-                .orElseThrow(()-> new TarefaNaoEncontradaException());
-
-        u.getTarefas().add(t);
-
-        atualizada = repository.save(t);
-
-    }else throw new UsuarioInativoException();
-
-    return TarefaResponseDto.fromEntity(atualizada);
+        return repository.findByStatusIn(statusAtivos)
+                .stream()
+                .map(TarefaResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
 
 
-}
 
 
 
