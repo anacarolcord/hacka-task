@@ -37,6 +37,8 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation("dev.langchain4j:langchain4j-google-ai-gemini-spring-boot-starter:1.7.1-beta14")
+	implementation("dev.langchain4j:langchain4j-spring-boot-starter:1.7.1-beta14")
 
 }
 
