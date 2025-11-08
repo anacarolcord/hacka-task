@@ -1,14 +1,12 @@
 package com.example.gerenciador_tarefas.service;
 
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
+import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.entity.*;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import com.example.gerenciador_tarefas.entity.enums.StatusTarefa;
-import com.example.gerenciador_tarefas.exception.AcessoNaoAutorizadoException;
-import com.example.gerenciador_tarefas.exception.TarefaNaoEncontradaException;
-import com.example.gerenciador_tarefas.exception.UserNotFoundException;
-import com.example.gerenciador_tarefas.exception.UsuarioInativoException;
+import com.example.gerenciador_tarefas.exception.*;
 import com.example.gerenciador_tarefas.repository.TarefaRepository;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,13 +49,17 @@ public class TarefaService {
         Tarefa tarefa = repository.findById(idTarefa)
                 .orElseThrow(TarefaNaoEncontradaException::new);
 
+        if(!dados.status().equals(StatusTarefa.CONCLUIDA) && dados.tempoEstimado().isPositive()){
+            throw new ErroAtualizarTarefaException();
+        }
+
         if (usuario.getAtivo() && usuario.getFerias()==null) {
+
+
 
             tarefa.setStatus(dados.status());
             tarefa.setTempoUtilizado(dados.tempoUtilizado());
-            if(tarefa.getTempoUtilizado().isPositive()){
-                tarefa.setStatus(StatusTarefa.EM_ANDAMENTO);
-            }
+
 
             AtualizarCard atualizarCard = new AtualizarCard();
             atualizarCard.setData(LocalDateTime.now());
@@ -191,6 +195,9 @@ public class TarefaService {
 
             u.getTarefas().add(t);
 
+            t.setDataDeAtualizacao(LocalDate.now());
+
+
             atualizada = repository.save(t);
 
         } else throw new UsuarioInativoException();
@@ -283,6 +290,39 @@ public class TarefaService {
         return TarefaResponseDto.fromEntity(t);
     }
 
+    //método que lista tarefas com status pendentes e em andamento
+    public List<TarefaResponseDto> listarTarefasPendentesEmAndamento() {
+        List<StatusTarefa> statusAtivos = Arrays.asList(
+                StatusTarefa.PENDENTE,
+                StatusTarefa.EM_ANDAMENTO
+        );
+
+        return repository.findByStatusIn(statusAtivos)
+                .stream()
+                .map(TarefaResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    //método que conta POR USUARIO quantas tarefas estão em cada status
+    public HistoricoUsuarioDto gerarHistoricoPorUsuario(String usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new UserNotFoundException(usuarioId));
+
+        var tarefas = repository.findAllByUsuario(usuario);
+
+        long pendentes = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.PENDENTE).count();
+        long andamento = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.EM_ANDAMENTO).count();
+        long concluidas = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.CONCLUIDA).count();
+        long canceladas = tarefas.stream().filter(t -> t.getStatus() == StatusTarefa.CANCELADA).count();
+
+        return new HistoricoUsuarioDto(
+                usuario.getNome(),
+                pendentes,
+                andamento,
+                concluidas,
+                canceladas
+        );
+    }
 
 }
 
