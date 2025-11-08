@@ -5,9 +5,13 @@ import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
 import com.example.gerenciador_tarefas.entity.Tarefa;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
+import com.example.gerenciador_tarefas.exception.AcessoNaoAutorizadoException;
+import com.example.gerenciador_tarefas.exception.TarefaNaoEncontradaException;
 import com.example.gerenciador_tarefas.repository.TarefaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,14 +33,18 @@ public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario){
 
 public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, Usuario usuario){
     Tarefa tarefa = repository.findById(idTarefa)
-            .orElseThrow(() -> new TarefaNaoEncontradaException());
+            .orElseThrow(TarefaNaoEncontradaException::new);
 
     if( usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.COLABORADOR)) {
         tarefa.setStatus(dados.status());
         tarefa.setTempoUtilizado(dados.tempoUtilizado());
     }
 
-    if(usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.GESTOR)){
+    if(usuario.getAtivo()
+            && !usuario.getFerias()
+            && (usuario.getCargo().equals(Cargo.GESTOR)
+            || usuario.getCargo(Cargo.GESTORTEMPORARIO))){
+
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
         tarefa.setStatus(dados.status());
@@ -44,7 +52,10 @@ public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, 
         tarefa.setUsuario(dados.usuario());
     }
 
-    if(usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.ADMIN)){
+    if(usuario.getAtivo()
+            && !usuario.getFerias()
+            && usuario.getCargo().equals(Cargo.ADMIN)){
+
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
         tarefa.setStatus(dados.status());
@@ -55,6 +66,10 @@ public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, 
 
     return TarefaResponseDto.fromEntity(tarefa);
 
+}
+
+public List<TarefaResponseDto> listarTodas(Usuario usuario){
+    if(usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.GESTOR)){
 }
 
 
