@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 
 public record TarefaResponseDto(
-        Long idTarefa,
+        String idTarefa,
         String nome,
         String descricao,
         LocalDate dataDeAtualizacao,
