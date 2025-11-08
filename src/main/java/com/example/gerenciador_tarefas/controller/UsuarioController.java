@@ -6,15 +6,19 @@ import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
+import com.example.gerenciador_tarefas.exception.MuitosArgumentosException;
 import com.example.gerenciador_tarefas.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -31,24 +35,36 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios(){
+    public ResponseEntity<Page<UsuarioResponseDTO>> listarUsuarios(Pageable pageable){
 
-        List<UsuarioResponseDTO> responseDTO = usuarioService.listarUsuario();
+        Page<UsuarioResponseDTO> responseDTO = usuarioService.listarUsuario(pageable);
         return ResponseEntity.ok(responseDTO);
 
     }
 
     @GetMapping("/pesquisa")
-    public ResponseEntity<Object> pesquisaUsuarios(@RequestParam(required = false)String idUsuario,
-                                                                     @RequestParam(required = false)String nome,
-                                                                     @RequestParam(required = false)Cargo cargo,
-                                                                     @RequestParam(required = false)String email,
-                                                                     @RequestParam(required = false)Boolean ativo){
+    public ResponseEntity<Page<UsuarioResponseDTO>> pesquisaUsuarios(
+            @RequestParam(required = false) String idUsuario,
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) Cargo cargo,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Boolean ativo,
+            Pageable pageable) {
 
-        Object responseDTO = usuarioService.pesquisaUsuarios(idUsuario, nome, cargo, email, ativo);
+        // Conta quantos parâmetros foram preenchidos
+        long parametrosInformados = Stream.of(idUsuario, nome, cargo, email, ativo)
+                .filter(Objects::nonNull)
+                .count();
+
+        // Se for mais de 1, retorna erro 400
+        if (parametrosInformados > 1) {
+            throw new MuitosArgumentosException();
+        }
+
+        Page<UsuarioResponseDTO> responseDTO = usuarioService.pesquisaUsuarios(idUsuario, nome, cargo, email, ativo, pageable);
         return ResponseEntity.ok(responseDTO);
-
     }
+
 
     @DeleteMapping("/delete/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable String idUsuario){

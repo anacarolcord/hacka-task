@@ -40,5 +40,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleHistoricoNaoEncontrado(HistoricoNaoEncontradoException ex){
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
+
+    @ExceptionHandler(MuitosArgumentosException.class)
+    public ResponseEntity<String> handleMuitosArgumentos(MuitosArgumentosException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
 }
 

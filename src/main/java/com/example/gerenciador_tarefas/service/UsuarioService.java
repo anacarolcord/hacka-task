@@ -12,6 +12,9 @@ import com.example.gerenciador_tarefas.exception.UserNotFoundException;
 import com.example.gerenciador_tarefas.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,96 +44,51 @@ public class UsuarioService {
         return UsuarioResponseDTO.fromEntity(usuario);
     }
 
-    public List<UsuarioResponseDTO> listarUsuario(){
+    public Page<UsuarioResponseDTO> listarUsuario(Pageable pageable){
         log.info("Iniciando listagem de todos os usuários!");
-        return usuarioRepository.findAll()
-                .stream()
-                .map(UsuarioResponseDTO::fromEntity)
-                .toList();
+        return usuarioRepository.findAll(pageable)
+                .map(UsuarioResponseDTO::fromEntity);
     }
 
-    public Object pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo) {
+    public Page<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo, Pageable pageable) {
 
-        log.info("Retornando um usuario pelo id!");
         if (idUsuario != null) {
             Usuario usuario = usuarioRepository.findById(idUsuario)
                     .orElseThrow(() -> new UserNotFoundException(idUsuario));
 
-            return UsuarioResponseDTO.fromEntity(usuario);
+            UsuarioResponseDTO dto = UsuarioResponseDTO.fromEntity(usuario);
+
+            return new PageImpl<>(
+                    List.of(dto),
+                    pageable,
+                    1
+            );
         }
 
-        log.info("Retornando um usuario pelo email!");
-        if (email != null) {
-            Usuario usuario = usuarioRepository.findByEmail(email)
-                    .orElseThrow(() -> new UserNotFoundException(email));
-
-            return UsuarioResponseDTO.fromEntity(usuario);
+        if (nome != null){
+            return usuarioRepository.findByNome(nome, pageable)
+                    .map(UsuarioResponseDTO::fromEntity);
         }
 
-        log.info("Retornando um usuario pelos atributos de nome, cargo e ativo!");
-        if (nome != null && cargo != null && ativo != null){
-
-            return usuarioRepository.findByNomeAndCargoAndAtivo(nome, cargo, ativo)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-
+        if (cargo != null){
+            return usuarioRepository.findByCargo(cargo, pageable)
+                    .map(UsuarioResponseDTO::fromEntity);
         }
 
-        log.info("Retornando um usuario pelo nome e pelo cargo!");
-        if (nome != null && cargo != null){
-
-            return usuarioRepository.findByNomeAndCargo(nome, cargo)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
+        if (email != null){
+            return usuarioRepository.findByEmail(email, pageable)
+                    .map(UsuarioResponseDTO::fromEntity);
         }
 
-        log.info("Retornando um usuario pelo nome e ativo!");
-        if (nome != null && ativo != null){
-
-            return usuarioRepository.findByNomeAndAtivo(nome, ativo)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
+        if (ativo != null){
+            return usuarioRepository.findByAtivo(ativo, pageable)
+                    .map(UsuarioResponseDTO::fromEntity);
         }
 
-        log.info("Retornando um usuario pelo cargo e ativo!");
-        if (cargo != null && ativo != null){
+        return usuarioRepository.findAll(pageable)
+                .map(UsuarioResponseDTO::fromEntity);
 
-            return usuarioRepository.findByCargoAndAtivo(cargo, ativo)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
 
-        }
-
-        log.info("Retornando um usuario pelo nome!");
-        if (nome != null) {
-            return usuarioRepository.findByNome(nome)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-        }
-
-        log.info("Retornando um usuario pelo cargo!");
-        if (cargo != null) {
-            return usuarioRepository.findByCargo(cargo)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-        }
-
-        log.info("Retornando um usuario pelo id!");
-        if (ativo != null) {
-            return usuarioRepository.findByAtivo(ativo)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-        }
-
-        log.info("Fallback de segurança!");
-        return List.of();
     }
 
 
