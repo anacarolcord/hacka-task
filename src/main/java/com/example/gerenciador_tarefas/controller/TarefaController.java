@@ -73,6 +73,14 @@ public class TarefaController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PatchMapping("/atribuir")
+    public  ResponseEntity<TarefaResponseDto> atribuirTarefa( @PathVariable String idTarefa, String idUsuario ){
+        TarefaResponseDto tarefaAtualizada = service.atribuirTarefa(idTarefa, idUsuario);
+        return ResponseEntity.status(200).body(tarefaAtualizada);
+    }
+
+
 }
 
 
