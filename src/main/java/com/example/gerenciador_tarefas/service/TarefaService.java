@@ -152,6 +152,27 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
     return tarefasPeloIdUsuario;
 }
 
+//Método gestor atribui tarefa para um usuario específico
+public TarefaResponseDto atribuirTarefa(String idTarefa, String idUsuario, Usuario usuario){
+
+    Tarefa atualizada = null;
+    if(usuario.getAtivo() && !usuario.getFerias()){
+
+        Usuario u = usuarioRepository.findById(idUsuario)
+                .orElseThrow(()-> new UserNotFoundException(idUsuario));
+
+        Tarefa t = repository.findById(idTarefa)
+                .orElseThrow(()-> new TarefaNaoEncontradaException());
+
+        u.getTarefas().add(t);
+
+        atualizada = repository.save(t);
+
+    }else throw new UsuarioInativoException();
+
+    return TarefaResponseDto.fromEntity(atualizada);
+}
+
 
 }
 
