@@ -1,6 +1,9 @@
 package com.example.gerenciador_tarefas.service;
 
+import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
+import com.example.gerenciador_tarefas.dto.request.UsuarioGestorRequestDTO;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
+import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
@@ -18,7 +21,7 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioResponseDTO criarColaborador(UsuarioRequestDTO request){
+    public UsuarioResponseDTO criarColaborador(CriarColaboradorRequest request){
         String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
 
         Usuario usuario = request.toEntity(senhaCriptografada);
@@ -34,14 +37,7 @@ public class UsuarioService {
                 .toList();
     }
 
-    public List<UsuarioResponseDTO> pesquisaUsuarios(String idUsuario, String nome, Cargo cargo, String email, Boolean ativo){
-
-        if (idUsuario != null){
-            return usuarioRepository.findById(idUsuario)
-                    .stream()
-                    .map(UsuarioResponseDTO::fromEntity)
-                    .toList();
-        }
+    public List<UsuarioResponseDTO> pesquisaUsuarios(String nome, Cargo cargo, String email, Boolean ativo){
 
         if (nome != null){
             return usuarioRepository.findByNome(nome)
@@ -80,24 +76,19 @@ public class UsuarioService {
 
 
     public UsuarioResponseDTO deletarUsuario(String idUsuario){
-        Optional<Usuario> usuario = usuarioRepository.findById(String.valueOf(Long.valueOf(idUsuario)));
+        Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         if(usuario.isPresent()){
             usuario.get().setAtivo(false);
             return UsuarioResponseDTO.fromEntity(usuario.get());
         }
         throw new UserNotFoundException(idUsuario);
+
     }
+    public UsuarioGestorResponseDTO criarGestor(UsuarioGestorRequestDTO request){
+        String senha= new BCryptPasswordEncoder().encode(request.senha());
+        Usuario usuarioadm = request.toEntity(senha);
+        usuarioRepository.save((usuarioadm));
 
-
-
-    public UsuarioResponseDTO atualizarSenha(String idUsuario, UsuarioRequestDTO request){
-        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
-        if(usuarioOptional.isPresent()){
-            Usuario usuario = usuarioOptional.get();
-            usuario.setSenha(request.senha());
-            usuarioRepository.save(usuario);
-            return UsuarioResponseDTO.fromEntity(usuario);
-        }
-        throw new UserNotFoundException(idUsuario);
+        return UsuarioGestorResponseDTO.fromEntity(usuarioadm);
     }
 }
