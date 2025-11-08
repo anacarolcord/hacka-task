@@ -20,61 +20,61 @@ public class TarefaService {
     private final TarefaRepository repository;
 
 
-public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario){
-    if(usuario.getCargo().equals(Cargo.COLABORADOR)){
-        throw new AcessoNaoAutorizadoException();
-    }
-     Tarefa tarefa = dados.toEntity();
+    public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario) {
+        if (usuario.getCargo().equals(Cargo.COLABORADOR)) {
+            throw new AcessoNaoAutorizadoException();
+        }
+        Tarefa tarefa = dados.toEntity();
 
-     repository.save(tarefa);
+        repository.save(tarefa);
 
-     return TarefaResponseDto.fromEntity(tarefa);
-}
-
-public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, Usuario usuario){
-    Tarefa tarefa = repository.findById(idTarefa)
-            .orElseThrow(TarefaNaoEncontradaException::new);
-
-    if( usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.COLABORADOR)) {
-        tarefa.setStatus(dados.status());
-        tarefa.setTempoUtilizado(dados.tempoUtilizado());
+        return TarefaResponseDto.fromEntity(tarefa);
     }
 
-    if(usuario.getAtivo()
-            && !usuario.getFerias()
-            && (usuario.getCargo().equals(Cargo.GESTOR)
-            || usuario.getCargo(Cargo.GESTORTEMPORARIO))){
+    public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, Usuario usuario) {
+        Tarefa tarefa = repository.findById(idTarefa)
+                .orElseThrow(TarefaNaoEncontradaException::new);
 
-        tarefa.setNome(dados.nome());
-        tarefa.setDescricao(dados.descricao());
-        tarefa.setStatus(dados.status());
-        tarefa.setTempoEstimado(dados.tempoEstimado());
-        tarefa.setUsuario(dados.usuario());
+        if (usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.COLABORADOR)) {
+            tarefa.setStatus(dados.status());
+            tarefa.setTempoUtilizado(dados.tempoUtilizado());
+        }
+
+        if (usuario.getAtivo()
+                && !usuario.getFerias()
+                && (usuario.getCargo().equals(Cargo.GESTOR)
+                || usuario.getCargo().equals(Cargo.COLABORADORRESPONSAVEL))) {
+
+            tarefa.setNome(dados.nome());
+            tarefa.setDescricao(dados.descricao());
+            tarefa.setStatus(dados.status());
+            tarefa.setTempoEstimado(dados.tempoEstimado());
+            tarefa.setUsuario(dados.usuario());
+        }
+
+        if (usuario.getAtivo()
+                && !usuario.getFerias()
+                && usuario.getCargo().equals(Cargo.ADMIN)) {
+
+            tarefa.setNome(dados.nome());
+            tarefa.setDescricao(dados.descricao());
+            tarefa.setStatus(dados.status());
+            tarefa.setTempoEstimado(dados.tempoEstimado());
+            tarefa.setUsuario(dados.usuario());
+            tarefa.setTempoUtilizado(dados.tempoUtilizado());
+        }
+
+        return TarefaResponseDto.fromEntity(tarefa);
+
     }
 
-    if(usuario.getAtivo()
-            && !usuario.getFerias()
-            && usuario.getCargo().equals(Cargo.ADMIN)){
+    /*
+    public List<TarefaResponseDto> listarTodas(Usuario usuario) {
+        if (usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.GESTOR)) {
+        }
 
-        tarefa.setNome(dados.nome());
-        tarefa.setDescricao(dados.descricao());
-        tarefa.setStatus(dados.status());
-        tarefa.setTempoEstimado(dados.tempoEstimado());
-        tarefa.setUsuario(dados.usuario());
-        tarefa.setTempoUtilizado(dados.tempoUtilizado());
+
     }
 
-    return TarefaResponseDto.fromEntity(tarefa);
-
-}
-
-public List<TarefaResponseDto> listarTodas(Usuario usuario){
-    if(usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.GESTOR)){
-}
-
-
-
-
-
-
+     */
 }

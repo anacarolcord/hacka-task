@@ -12,7 +12,7 @@ public record UsuarioRequestDTO(
         String nome,
         @NotNull(message = "O cargo não pode ser nulo!")
         Cargo cargo,
-        @CPF
+
         @NotBlank(message = "O cpf não pode ser nulo!")
         String cpf,
         @Email
