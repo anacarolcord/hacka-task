@@ -59,8 +59,8 @@ public class UsuarioController {
 
     @PostMapping("/admin")
     public ResponseEntity <UsuarioGestorResponseDTO> criarGestor(@RequestBody UsuarioGestorRequestDTO dto){
-        UsuarioGestorResponseDTO usariogestor=usuarioService.criarGestor(dto);
-        return ResponseEntity.status(201).body(usariogestor);
+        UsuarioGestorResponseDTO usuariogestor=usuarioService.criarGestor(dto);
+        return ResponseEntity.status(201).body(usuariogestor);
     }
 
 
