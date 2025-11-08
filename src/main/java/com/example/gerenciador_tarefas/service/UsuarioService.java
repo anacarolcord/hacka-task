@@ -1,7 +1,9 @@
 package com.example.gerenciador_tarefas.service;
 
 import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
+import com.example.gerenciador_tarefas.dto.request.UsuarioGestorRequestDTO;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
+import com.example.gerenciador_tarefas.dto.response.UsuarioGestorResponseDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
@@ -143,7 +145,13 @@ public class UsuarioService {
         throw new UserNotFoundException(idUsuario);
     }
 
+    public UsuarioGestorResponseDTO criarGestor(UsuarioGestorRequestDTO request){
+        String senha= new BCryptPasswordEncoder().encode(request.senha());
+        Usuario usuarioadm = request.toEntity(senha);
+        usuarioRepository.save((usuarioadm));
 
+        return UsuarioGestorResponseDTO.fromEntity(usuarioadm);
+    }
 
 
 }
