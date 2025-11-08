@@ -217,6 +217,10 @@ public class TarefaService {
         Usuario usuarioRecebe = usuarioRepository.findById(idUsuariorecebe)
                 .orElseThrow(() -> new UserNotFoundException(idUsuariorecebe));
 
+        if(usuarioEnvia.getCargo().equals(Cargo.GESTOR)){
+            usuarioRecebe.setCargo(Cargo.COLABORADORRESPONSAVEL);
+        }
+
         if(usuarioRecebe.getFerias() != null){
             throw new UsuarioInativoException();
         }
