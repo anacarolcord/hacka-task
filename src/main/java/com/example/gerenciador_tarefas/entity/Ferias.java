@@ -18,8 +18,9 @@ import java.time.LocalDateTime;
 public class Ferias {
     @Id
     private String idFerias;
-    LocalDateTime dataInicio;
-    LocalDateTime dataFim;
+    private LocalDateTime dataInicio;
+    private LocalDateTime dataFim;
+    private String idUsuarioReceptor;
 
 }
 

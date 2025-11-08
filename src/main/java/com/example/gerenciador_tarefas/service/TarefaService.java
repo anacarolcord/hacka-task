@@ -209,7 +209,7 @@ public class TarefaService {
 
     //método de transferir tarefas entre usuario
     @Transactional
-    public void transferirTarefa(String idUsuariorecebe, String idUsuarioenvia) {
+    public void transferirTarefa(String idUsuariorecebe, String idUsuarioenvia, String motivo) {
 
         Usuario usuarioEnvia = usuarioRepository.findById(idUsuarioenvia)
                 .orElseThrow(() -> new UserNotFoundException(idUsuarioenvia));
@@ -217,8 +217,12 @@ public class TarefaService {
         Usuario usuarioRecebe = usuarioRepository.findById(idUsuariorecebe)
                 .orElseThrow(() -> new UserNotFoundException(idUsuariorecebe));
 
+
         if(usuarioEnvia.getCargo().equals(Cargo.GESTOR)){
             usuarioRecebe.setCargo(Cargo.COLABORADORRESPONSAVEL);
+        }
+        if(usuarioEnvia.getCargo().equals(Cargo.COLABORADORRESPONSAVEL) && usuarioRecebe.getCargo().equals(Cargo.GESTOR)){
+            usuarioEnvia.setCargo(Cargo.COLABORADOR);
         }
 
         if(usuarioRecebe.getFerias() != null){
@@ -245,7 +249,7 @@ public class TarefaService {
 
         transferencia.setEmissor(usuarioEnvia);
         transferencia.setReceptor(usuarioRecebe);
-        transferencia.setMotivo("Férias");
+        transferencia.setMotivo(motivo);
 
         Historico historico = new Historico();
 
