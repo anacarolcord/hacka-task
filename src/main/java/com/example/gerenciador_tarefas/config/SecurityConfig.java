@@ -28,8 +28,8 @@ public class SecurityConfig {
                 .sessionManagement( session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->authorize
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/tarefas/atribuir").permitAll()
-                        .requestMatchers("/tarefas/gestores").hasRole("GESTOR")
+                        .requestMatchers("/tarefas/atribuir").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
+                        .requestMatchers("/tarefas/gestores").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/tarefas/criar-tarefa").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/tarefas/listar-tarefas").hasAnyRole("GESTOR", "COLABORADORRESPONSAVEL")
                         .requestMatchers("/usuarios/admin").hasRole("ADMIN")

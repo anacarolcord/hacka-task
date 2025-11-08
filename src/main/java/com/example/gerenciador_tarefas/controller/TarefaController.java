@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.controller;
 
+import com.example.gerenciador_tarefas.dto.request.AtribuirTarefaRequest;
 import com.example.gerenciador_tarefas.dto.request.TarefaRequestDto;
 import com.example.gerenciador_tarefas.dto.response.HistoricoUsuarioDto;
 import com.example.gerenciador_tarefas.dto.response.TarefaResponseDto;
@@ -75,8 +76,8 @@ public class TarefaController {
     }
 
     @PatchMapping("/atribuir")
-    public  ResponseEntity<TarefaResponseDto> atribuirTarefa( @PathVariable String idTarefa, String idUsuario ){
-        TarefaResponseDto tarefaAtualizada = service.atribuirTarefa(idTarefa, idUsuario);
+    public  ResponseEntity<TarefaResponseDto> atribuirTarefa(@RequestBody AtribuirTarefaRequest request){
+        TarefaResponseDto tarefaAtualizada = service.atribuirTarefa(request.idTarefa(), request.idUsuario());
         return ResponseEntity.status(200).body(tarefaAtualizada);
     }
 
