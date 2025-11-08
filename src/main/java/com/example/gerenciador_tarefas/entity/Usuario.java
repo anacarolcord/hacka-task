@@ -2,6 +2,7 @@ package com.example.gerenciador_tarefas.entity;
 
 import com.example.gerenciador_tarefas.entity.enums.Cargo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -18,10 +19,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Usuario implements UserDetails {
 
     @Id
-    private Long idUsuario;
+    private String idUsuario;
     private String nome;
     private Cargo cargo;
     private String email;
