@@ -33,41 +33,58 @@ public TarefaResponseDto salvarTarefa(TarefaRequestDto dados, Usuario usuario){
      return TarefaResponseDto.fromEntity(tarefa);
 }
 
-public TarefaResponseDto atualizarTarefa(TarefaRequestDto dados, Long idTarefa, Usuario usuario){
+public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, String idTarefa, Usuario usuario){
     Tarefa tarefa = repository.findById(idTarefa)
             .orElseThrow(TarefaNaoEncontradaException::new);
 
-    if( usuario.getAtivo() && !usuario.getFerias() && usuario.getCargo().equals(Cargo.COLABORADOR)) {
+    if( usuario.getAtivo() && !usuario.getFerias()) {
         tarefa.setStatus(dados.status());
         tarefa.setTempoUtilizado(dados.tempoUtilizado());
-    }
+    }else throw new AcessoNaoAutorizadoException();
 
-    if(usuario.getAtivo()
-            && !usuario.getFerias()
-            && (usuario.getCargo().equals(Cargo.GESTOR)
-            || usuario.getCargo().equals(Cargo.COLABORADORRESPONSAVEL))){
 
-        tarefa.setNome(dados.nome());
-        tarefa.setDescricao(dados.descricao());
-        tarefa.setStatus(dados.status());
-        tarefa.setTempoEstimado(dados.tempoEstimado());
-        tarefa.setUsuario(dados.usuario());
-    }
-
-    if(usuario.getAtivo()
-            && !usuario.getFerias()
-            && usuario.getCargo().equals(Cargo.ADMIN)){
-
-        tarefa.setNome(dados.nome());
-        tarefa.setDescricao(dados.descricao());
-        tarefa.setStatus(dados.status());
-        tarefa.setTempoEstimado(dados.tempoEstimado());
-        tarefa.setUsuario(dados.usuario());
-        tarefa.setTempoUtilizado(dados.tempoUtilizado());
-    }
 
     return TarefaResponseDto.fromEntity(tarefa);
 
+}
+
+public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String idTarefa, Usuario usuario){
+    Tarefa tarefa = repository.findById(idTarefa)
+            .orElseThrow(()-> new TarefaNaoEncontradaException());
+
+    if(usuario.getAtivo()
+            && !usuario.getFerias()){
+
+        tarefa.setNome(dados.nome());
+        tarefa.setDescricao(dados.descricao());
+        tarefa.setStatus(dados.status());
+        tarefa.setTempoEstimado(dados.tempoEstimado());
+        tarefa.setUsuario(dados.usuario());
+    }
+
+    return TarefaResponseDto.fromEntity(tarefa);
+}
+
+public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, String idTarefa, Usuario usuario){
+
+    Tarefa tarefa = repository.findById(idTarefa)
+            .orElseThrow(()-> new TarefaNaoEncontradaException());
+
+
+
+    if(usuario.getAtivo()
+            && !usuario.getFerias()) {
+
+        tarefa.setNome(dados.nome());
+        tarefa.setDescricao(dados.descricao());
+        tarefa.setStatus(dados.status());
+        tarefa.setTempoEstimado(dados.tempoEstimado());
+        tarefa.setUsuario(dados.usuario());
+        tarefa.setTempoUtilizado(dados.tempoUtilizado());
+
+    }
+
+    return TarefaResponseDto.fromEntity(tarefa);
 }
 
 public List<TarefaResponseDto> listarTodas(Usuario usuario) {
@@ -75,8 +92,7 @@ public List<TarefaResponseDto> listarTodas(Usuario usuario) {
     List<TarefaResponseDto> todas = new ArrayList<>();
 
     if (usuario.getAtivo()
-            && !usuario.getFerias()
-            && (usuario.getCargo().equals(Cargo.GESTOR)) || usuario.getCargo().equals(Cargo.COLABORADORRESPONSALVEL)) {
+            && !usuario.getFerias()) {
 
         todas = repository.findAll()
                 .stream()
@@ -88,7 +104,26 @@ public List<TarefaResponseDto> listarTodas(Usuario usuario) {
     return todas;
 }
 
-public List<TarefaResponseDto> listarTarefaPorUsuario(Usuario usuario, Long idUsuario){
+public List<TarefaResponseDto> listarTarefaPorUsuario(Usuario usuario, String idUsuario){
+
+    List <TarefaResponseDto> tarefasPorUsuario = new ArrayList<>();
+
+    if(usuario.getAtivo() && !usuario.getFerias() ) {
+
+         tarefasPorUsuario = repository.findAllByIdUsuario(idUsuario)
+                .stream()
+                .map(tarefa -> TarefaResponseDto.fromEntity(tarefa))
+                .collect(Collectors.toList());
+
+
+    }
+
+
+
+
+}
+
+
 
 }
 

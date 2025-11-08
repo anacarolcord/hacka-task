@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Setter
 public class Tarefa {
     @Id
-    private Long idTarefa;
+    private String idTarefa;
 
     private String nome;
 
