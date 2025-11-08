@@ -38,7 +38,7 @@ public TarefaResponseDto atualizarTarefaColaborador(TarefaRequestDto dados, Stri
     Tarefa tarefa = repository.findById(idTarefa)
             .orElseThrow(TarefaNaoEncontradaException::new);
 
-    if( usuario.getAtivo() && !usuario.getFerias()) {
+    if( usuario.getAtivo() && usuario.getFerias()==null) {
         tarefa.setStatus(dados.status());
         tarefa.setTempoUtilizado(dados.tempoUtilizado());
     }else throw new AcessoNaoAutorizadoException();
@@ -54,7 +54,7 @@ public TarefaResponseDto atualizarTarefaGestor(TarefaRequestDto dados, String id
             .orElseThrow(()-> new TarefaNaoEncontradaException());
 
     if(usuario.getAtivo()
-            && !usuario.getFerias()){
+            && usuario.getFerias()==null){
 
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
@@ -74,7 +74,7 @@ public TarefaResponseDto atualizaTarefaAdministrador(TarefaRequestDto dados, Str
 
 
     if(usuario.getAtivo()
-            && !usuario.getFerias()) {
+            && usuario.getFerias()==null) {
 
         tarefa.setNome(dados.nome());
         tarefa.setDescricao(dados.descricao());
@@ -97,7 +97,7 @@ public List<TarefaResponseDto> listarTodasGestor(Usuario usuario) {
     List<TarefaResponseDto> todas = new ArrayList<>();
 
     if (usuario.getAtivo()
-            && !usuario.getFerias()) {
+            && usuario.getFerias()==null) {
 
         todas = repository.findAll()
                 .stream()
@@ -114,7 +114,7 @@ public List<TarefaResponseDto> listarTodasUsuario(Usuario usuario){
 
     List <TarefaResponseDto> tarefasPorUsuario = new ArrayList<>();
 
-    if(usuario.getAtivo() && !usuario.getFerias() ) {
+    if(usuario.getAtivo() && usuario.getFerias()==null ) {
 
          tarefasPorUsuario = repository.findAllByUsuario(usuario)
                 .stream()
@@ -133,7 +133,7 @@ public List<TarefaResponseDto> listarTodasPeloIdUsuario(Usuario usuario, String 
 
     List<TarefaResponseDto> tarefasPeloIdUsuario = new ArrayList<>();
 
-    if (usuario.getAtivo() && !usuario.getFerias()) {
+    if (usuario.getAtivo() && usuario.getFerias()==null) {
 
         Usuario u = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException(idUsuario));
