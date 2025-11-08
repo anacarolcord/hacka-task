@@ -37,12 +37,13 @@ public class UsuarioController {
     }
 
     @GetMapping("/pesquisa")
-    public ResponseEntity<List<UsuarioResponseDTO>> pesquisaUsuarios(@RequestParam(required = false)String nome,
+    public ResponseEntity<List<UsuarioResponseDTO>> pesquisaUsuarios(@RequestParam(required = false)String idUsuario,
+                                                                     @RequestParam(required = false)String nome,
                                                                      @RequestParam(required = false)Cargo cargo,
                                                                      @RequestParam(required = false)String email,
                                                                      @RequestParam(required = false)Boolean ativo){
 
-        List<UsuarioResponseDTO> responseDTO = usuarioService.pesquisaUsuarios(nome, cargo, email, ativo);
+        List<UsuarioResponseDTO> responseDTO = usuarioService.pesquisaUsuarios(idUsuario, nome, cargo, email, ativo);
         return ResponseEntity.ok(responseDTO);
 
     }
@@ -56,6 +57,13 @@ public class UsuarioController {
     }
 
 
+    @PutMapping("/{idUsuario}")
+    public ResponseEntity<UsuarioResponseDTO> atualizarSenha(@PathVariable("idUsuario") String idUsuario, UsuarioRequestDTO request){
+
+        UsuarioResponseDTO responseDTO = usuarioService.atualizarSenha(idUsuario, request);
+        return ResponseEntity.ok(responseDTO);
+
+    }
 
 
 }
