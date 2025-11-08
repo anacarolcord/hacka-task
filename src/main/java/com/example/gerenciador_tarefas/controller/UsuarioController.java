@@ -48,7 +48,7 @@ public class UsuarioController {
 
     }
 
-    @PutMapping("/{idUsuario}")
+    @DeleteMapping("/delete/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> deletarUsuario(@PathVariable("idUsuario") String idUsuario){
 
         UsuarioResponseDTO responseDTO = usuarioService.deletarUsuario(idUsuario);
@@ -57,10 +57,26 @@ public class UsuarioController {
     }
 
 
-    @PutMapping("/{idUsuario}")
-    public ResponseEntity<UsuarioResponseDTO> atualizarSenha(@PathVariable("idUsuario") String idUsuario, UsuarioRequestDTO request){
+    @PatchMapping("/atualizar/senha/{idUsuario}")
+    public ResponseEntity<UsuarioResponseDTO> atualizarSenha(@PathVariable("idUsuario") String idUsuario, @RequestBody UsuarioRequestDTO request){
 
         UsuarioResponseDTO responseDTO = usuarioService.atualizarSenha(idUsuario, request);
+        return ResponseEntity.ok(responseDTO);
+
+    }
+
+    @PatchMapping("/atualizar/cargo/{idUsuario}")
+    public ResponseEntity<UsuarioResponseDTO> atualizarCargo(@PathVariable("idUsuario") String idUsuario, @RequestBody UsuarioRequestDTO request){
+
+        UsuarioResponseDTO responseDTO = usuarioService.atualizarCargo(idUsuario, request);
+        return ResponseEntity.ok(responseDTO);
+
+    }
+
+    @PatchMapping("/atualizar/ferias/{idUsuario}")
+    public ResponseEntity<UsuarioResponseDTO> atualizarFerias(@PathVariable("idUsuario") String idUsuario, @RequestBody UsuarioRequestDTO request){
+
+        UsuarioResponseDTO responseDTO = usuarioService.atualizarFerias(idUsuario, request);
         return ResponseEntity.ok(responseDTO);
 
     }

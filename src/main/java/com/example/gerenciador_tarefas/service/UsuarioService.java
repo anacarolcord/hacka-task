@@ -1,5 +1,6 @@
 package com.example.gerenciador_tarefas.service;
 
+import com.example.gerenciador_tarefas.dto.request.CriarColaboradorRequest;
 import com.example.gerenciador_tarefas.dto.request.UsuarioRequestDTO;
 import com.example.gerenciador_tarefas.dto.response.UsuarioResponseDTO;
 import com.example.gerenciador_tarefas.entity.Usuario;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioResponseDTO criarColaborador(UsuarioRequestDTO request){
+    public UsuarioResponseDTO criarColaborador(CriarColaboradorRequest request){
         String senhaCriptografada = new BCryptPasswordEncoder().encode(request.senha());
 
         Usuario usuario = request.toEntity(senhaCriptografada);
@@ -80,10 +81,12 @@ public class UsuarioService {
 
 
     public UsuarioResponseDTO deletarUsuario(String idUsuario){
-        Optional<Usuario> usuario = usuarioRepository.findById(String.valueOf(Long.valueOf(idUsuario)));
-        if(usuario.isPresent()){
-            usuario.get().setAtivo(false);
-            return UsuarioResponseDTO.fromEntity(usuario.get());
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setAtivo(false);
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
         }
         throw new UserNotFoundException(idUsuario);
     }
@@ -94,10 +97,36 @@ public class UsuarioService {
         final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
         if(usuarioOptional.isPresent()){
             Usuario usuario = usuarioOptional.get();
-            usuario.setSenha(request.senha());
+            usuario.setSenha(new BCryptPasswordEncoder().encode(request.senha()));
             usuarioRepository.save(usuario);
             return UsuarioResponseDTO.fromEntity(usuario);
         }
         throw new UserNotFoundException(idUsuario);
     }
+
+    public UsuarioResponseDTO atualizarCargo(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setCargo(request.cargo());
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
+    }
+
+    public UsuarioResponseDTO atualizarFerias(String idUsuario, UsuarioRequestDTO request){
+        final Optional<Usuario> usuarioOptional = usuarioRepository.findById(idUsuario);
+        if(usuarioOptional.isPresent()){
+            Usuario usuario = usuarioOptional.get();
+            usuario.setFerias(request.ferias());
+            usuarioRepository.save(usuario);
+            return UsuarioResponseDTO.fromEntity(usuario);
+        }
+        throw new UserNotFoundException(idUsuario);
+    }
+
+
+
+
 }
