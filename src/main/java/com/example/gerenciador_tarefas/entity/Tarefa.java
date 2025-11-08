@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
 
 @Document(collation = "tarefa")
 @AllArgsConstructor
@@ -31,5 +32,7 @@ public class Tarefa {
     private Historico historico;
 
     private Usuario usuario;
+
+    private List<Comentario> comentarios;
 
 }
